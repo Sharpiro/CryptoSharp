@@ -45,8 +45,8 @@ namespace CryptoSharp.Tests
             var messageBytes = Encoding.UTF8.GetBytes(expectedMessage);
             (byte[] key, byte[] iv) = _aesService.CreateKey();
 
-            var cryptoBytes = _aesService.EncryptBytes(messageBytes, key, iv);
-            var actualMessageBytes = _aesService.DecryptBytes(cryptoBytes, key, iv);
+            var cryptoBytes = _aesService.Encrypt(messageBytes, key, iv);
+            var actualMessageBytes = _aesService.Decrypt(cryptoBytes, key, iv);
             var actualMessage = Encoding.UTF8.GetString(actualMessageBytes);
 
             Assert.AreEqual(expectedMessage, actualMessage);

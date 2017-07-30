@@ -5,8 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CryptoSharp.Wpf.Windows"
         mc:Ignorable="d"
-        Title="MainWindow" Height="300" Width="500">
+        Title="MainWindow" Height="300" Width="500" WindowStartupLocation="CenterScreen">
     <Grid>
-        
+        <StackPanel Margin="15">
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" TextChanged="BrowseButton_TextChanged" Width="350"/>
+                <Button Name="BrowseButton" Content="Browse" Width="75" Margin="25,0,0,0" Click="BrowseButton_Click"/>
+            </StackPanel>
+            <StackPanel Margin="0,15,0,0">
+                <TextBlock Text="{Binding FileExists}"/>
+                <Button Name="EncrytpButton" Content="Encrypt" Width="75" Margin="370,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>
