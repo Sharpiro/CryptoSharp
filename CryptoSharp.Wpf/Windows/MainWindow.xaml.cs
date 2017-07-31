@@ -7,17 +7,16 @@ using System.Windows;
 
 namespace CryptoSharp.Wpf.Windows
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        private readonly MainWindowViewModel _viewModel = new MainWindowViewModel();
+        private readonly MainWindowViewModel _viewModel;
         private readonly MessageBoxFacade _messageBox = new MessageBoxFacade();
-        private readonly AesService _aesService = new AesService(new Sha256Hasher());
+        private readonly AesService _aesService = new AesService(new Sha256Hasher(), new MDFive128BitHasher());
 
-        public MainWindow()
+        public MainWindow(MainWindowViewModel viewModel)
         {
             InitializeComponent();
-
-            DataContext = _viewModel;
+            DataContext = _viewModel = viewModel;
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -35,20 +34,66 @@ namespace CryptoSharp.Wpf.Windows
             }
         }
 
-        private void BrowseButton_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void EncrytpButton_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (!_viewModel.FileExists) return;
+                IsEnabled = false;
+                if (!_viewModel.FileExists) throw new FileNotFoundException($"No file found @ '{_viewModel.FilePath}'");
                 var bytes = File.ReadAllBytes(_viewModel.FilePath);
-                var aesData = _aesService.CreateKey();
-                var cryptoBytes = _aesService.Encrypt(bytes, aesData.Key, aesData.IV);
+                var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
                 var parentDir = Directory.GetParent(_viewModel.FilePath);
                 File.WriteAllBytes($"{parentDir}/crypto.bin", cryptoBytes);
+                _messageBox.ShowInfo("Successfully encrypted file");
             }
             catch (Exception ex)
             {
                 _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
+            }
+        }
+
+        private void DecryptButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                IsEnabled = false;
+                if (!_viewModel.FileExists) throw new FileNotFoundException($"No file found @ '{_viewModel.FilePath}'");
+                var bytes = File.ReadAllBytes(_viewModel.FilePath);
+                var cryptoBytes = _aesService.Decrypt(bytes, _viewModel.Key, _viewModel.IV);
+                var parentDir = Directory.GetParent(_viewModel.FilePath);
+                File.WriteAllBytes($"{parentDir}/plain.bin", cryptoBytes);
+                _messageBox.ShowInfo("Successfully decrypted file");
+            }
+            catch (Exception ex)
+            {
+                _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
+            }
+        }
+
+        private void GenKeyButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                IsEnabled = false;
+                (byte[] key, byte[] iv) = _aesService.CreateKey();
+                _viewModel.KeyString = Convert.ToBase64String(key);
+                _viewModel.IVString = Convert.ToBase64String(iv);
+            }
+            catch (Exception ex)
+            {
+                _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
             }
         }
     }

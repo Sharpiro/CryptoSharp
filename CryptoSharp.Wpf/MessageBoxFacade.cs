@@ -15,6 +15,18 @@ namespace CryptoSharp.Wpf
         //    _logger = logger;
         //}
 
+        public void ShowInfo(string message)
+        {
+            //_logger.Info(message);
+            MessageBox.Show(message, "Informational", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public void ShowWarning(string message)
+        {
+            //_logger.Warn(message);
+            MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
         public void ShowError(string message)
         {
             //_logger.Error(message);
@@ -27,16 +39,10 @@ namespace CryptoSharp.Wpf
             MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        public void ShowInformational(string message)
-        {
-            //_logger.Info(message);
-            MessageBox.Show(message, "Informational", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
         public bool Confirm(string message)
         {
             var result = MessageBox.Show(message, "Confirm", MessageBoxButton.YesNoCancel,
-                MessageBoxImage.Warning);
+                MessageBoxImage.Warning, MessageBoxResult.Cancel);
             return result == MessageBoxResult.Yes;
         }
     }

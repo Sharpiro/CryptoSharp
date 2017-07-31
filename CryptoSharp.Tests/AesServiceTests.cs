@@ -9,11 +9,12 @@ namespace CryptoSharp.Tests
     public class AesServiceTests
     {
         private readonly AesService _aesService;
-        private readonly IHasher _hasher = new Sha256Hasher();
+        private readonly I256BitHasher _keyHasher = new Sha256Hasher();
+        private readonly I128BitHasher _ivHasher = new MDFive128BitHasher();
 
         public AesServiceTests()
         {
-            _aesService = new AesService(_hasher);
+            _aesService = new AesService(_keyHasher, _ivHasher);
         }
 
         [TestMethod]
@@ -30,12 +31,16 @@ namespace CryptoSharp.Tests
         {
             const string plainTextKey = "this is my key it is special";
             const string expectedKey64 = "1OlRTTIeEFz9jVdwuL8wEDvYLRpYH0J9RU9wOvpjHF4=";
+            const string expectedIv64 = "d/LcNJEgkhrS4N/IcYq8kA==";
+
             (byte[] key, byte[] iv) = _aesService.CreateKey(plainTextKey);
             var actualKey64 = Convert.ToBase64String(key);
+            var actualIv64 = Convert.ToBase64String(iv);
 
             Assert.IsTrue(key.Length == 32);
             Assert.IsTrue(iv.Length == 16);
             Assert.AreEqual(expectedKey64, actualKey64);
+            Assert.AreEqual(expectedIv64, actualIv64);
         }
 
         [TestMethod]
