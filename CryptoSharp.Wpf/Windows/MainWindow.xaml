@@ -11,7 +11,7 @@
                 <TextBlock Text="Key:" Width="40"/>
                 <TextBox Text="{Binding KeyString}" Width="400"/>
                 <Button Name="GenKeyButton" Content="Gen" Width="75" Margin="15,0,0,0" Click="GenKeyButton_OnClick"/>
-                <Button Name="GenKeyFromButton" Content="Gen From" Width="75" Margin="15,0,0,0"/>
+                <Button Name="GenKeyFromButton" Content="Gen From" Width="75" Margin="15,0,0,0" Click="GenKeyFromButton_OnClick"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                 <TextBlock Text="IV:" Width="40"/>

@@ -96,5 +96,40 @@ namespace CryptoSharp.Wpf.Windows
                 IsEnabled = true;
             }
         }
+
+        private void GenKeyFromButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                IsEnabled = false;
+                var inputControl = new InputControl(_messageBox);
+                var infoWindow = new Window()
+                {
+                    //WindowStyle = WindowStyle.None,
+                    Title = "Enter a phrase to generate keys",
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Width = 275,
+                    Height = 150,
+                    Content = inputControl,
+                    Owner = this,
+                    ShowInTaskbar = false,
+                    ResizeMode = ResizeMode.NoResize
+                };
+                if (!infoWindow.ShowDialog() ?? false) return;
+
+                (byte[] key, byte[] iv) = _aesService.CreateKey(inputControl.InputValue);
+                _viewModel.KeyString = Convert.ToBase64String(key);
+                _viewModel.IVString = Convert.ToBase64String(iv);
+                _messageBox.ShowInfo($"Generated Key: '{_viewModel.KeyString}', IV: '{_viewModel.IVString}' from: '{inputControl.InputValue}'");
+            }
+            catch (Exception ex)
+            {
+                _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
+            }
+        }
     }
 }
