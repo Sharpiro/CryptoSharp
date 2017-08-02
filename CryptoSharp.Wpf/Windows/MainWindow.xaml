@@ -3,8 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CryptoSharp.Wpf.Models"
+        xmlns:tools="clr-namespace:CryptoSharp.Wpf.Tools"
         mc:Ignorable="d"
-        Title="MainWindow" Height="300" Width="675" WindowStartupLocation="CenterScreen">
+        Title="{Binding Title}" Height="300" Width="675" WindowStartupLocation="CenterScreen" Icon="/content/cryptolock.png">
+    <Window.Resources>
+        <tools:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
     <Grid>
         <StackPanel Margin="15">
             <StackPanel Orientation="Horizontal">
@@ -17,18 +23,31 @@
                 <TextBlock Text="IV:" Width="40"/>
                 <TextBox Text="{Binding IVString}" Width="400"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0" IsEnabled="{Binding IsFileSource}">
                 <TextBlock Text="Path:" Width="40"></TextBlock>
                 <TextBox Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" Width="400"/>
                 <Button Name="BrowseButton" Content="Browse" Width="75" Margin="15,0,0,0" Click="BrowseButton_Click"/>
+                <StackPanel Width="25" Margin="15,0,0,0">
+                    <Image Width="25" Height="20" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Source="{Binding MarkPath}"/>
+                </StackPanel>
             </StackPanel>
             <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
-                <Button Name="EncrytpButton" Content="Encrypt" Width="75" Margin="0,0,0,0" Click="EncrytpButton_OnClick"/>
+                <RadioButton Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:CryptoSource.File}}"/>
+                <RadioButton Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:CryptoSource.Text}}" Margin="15,0,0,0"/>
+            </StackPanel>
+            <StackPanel Margin="0,15,0,0" Orientation="Horizontal" IsEnabled="{Binding IsTextSource}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Input:" Width="50"/>
+                    <TextBox Text="{Binding InputText}" Width="250" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
+                    <TextBlock Text="Output:" Width="50"/>
+                    <TextBox Text="{Binding OutputText}" Width="250" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
+                <Button Name="EncrytpButton" Content="Encrypt" Width="75" Margin="0,0,0,0" Click="EncryptButton_OnClick"/>
                 <Button Name="DecryptButton" Content="Decrypt" Width="75" Margin="15,0,0,0" Click="DecryptButton_OnClick"/>
-            </StackPanel>
-            <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
-                <TextBlock Text="File Exists:" Width="60"/>
-                <TextBlock Text="{Binding FileExists}"/>
             </StackPanel>
         </StackPanel>
     </Grid>
