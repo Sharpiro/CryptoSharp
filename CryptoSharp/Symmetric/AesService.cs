@@ -1,11 +1,11 @@
-﻿using CryptoSharp.Hashing;
-using CryptoSharp.Tools;
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using CryptoSharp.Hashing;
+using CryptoSharp.Tools;
 
-namespace CryptoSharp
+namespace CryptoSharp.Symmetric
 {
     public class AesService
     {

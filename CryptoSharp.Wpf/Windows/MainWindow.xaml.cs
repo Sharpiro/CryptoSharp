@@ -1,15 +1,13 @@
 ﻿using CryptoSharp.Hashing;
-using CryptoSharp.Tools;
 using CryptoSharp.Wpf.Models;
 using CryptoSharp.Wpf.ViewModels;
 using Microsoft.Win32;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CryptoSharp.Symmetric;
 
 namespace CryptoSharp.Wpf.Windows
 {

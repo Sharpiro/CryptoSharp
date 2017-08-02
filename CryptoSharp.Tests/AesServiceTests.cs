@@ -2,6 +2,7 @@ using CryptoSharp.Hashing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Text;
+using CryptoSharp.Symmetric;
 
 namespace CryptoSharp.Tests
 {
