@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="CryptoSharp.Wpf.Controls.EncryptionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CryptoSharp.Wpf.Controls"
+             xmlns:tools="clr-namespace:CryptoSharp.Wpf.Tools"
+             xmlns:models="clr-namespace:CryptoSharp.Wpf.Models"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <tools:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <StackPanel Margin="15">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Key:" Width="40"/>
+                <TextBox Text="{Binding KeyString}" Width="400"/>
+                <Button Name="GenKeyButton" Content="Gen" Width="75" Margin="15,0,0,0" Click="GenKeyButton_OnClick"/>
+                <Button Name="GenKeyFromButton" Content="Gen From" Width="75" Margin="15,0,0,0" Click="GenKeyFromButton_OnClick"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="IV:" Width="40"/>
+                <TextBox Text="{Binding IVString}" Width="400"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0" IsEnabled="{Binding IsFileSource}">
+                <TextBlock Text="Path:" Width="40"></TextBlock>
+                <TextBox Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" Width="400"/>
+                <Button Name="BrowseButton" Content="Browse" Width="75" Margin="15,0,0,0" Click="BrowseButton_Click"/>
+                <StackPanel Width="25" Margin="15,0,0,0">
+                    <Image Width="25" Height="20" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Source="{Binding MarkPath}"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:CryptoSource.File}}"/>
+                    <RadioButton Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:CryptoSource.Text}}" Margin="15,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="300,0,0,0">
+                    <RadioButton Content="Hex" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesStringDisplay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesStringDisplay.Hex}}"/>
+                    <RadioButton Content="Base64" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesStringDisplay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesStringDisplay.Base64}}" Margin="15,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="0,5,0,0" Orientation="Horizontal" IsEnabled="{Binding IsTextSource}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Input:" Width="50"/>
+                    <TextBox Text="{Binding InputText}" Width="250" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
+                    <TextBlock Text="Output:" Width="50"/>
+                    <TextBox Text="{Binding OutputText}" Width="250" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
+                <Button Name="EncrytpButton" Content="Encrypt" Width="75" Margin="0,0,0,0" Click="EncryptButton_OnClick"/>
+                <Button Name="DecryptButton" Content="Decrypt" Width="75" Margin="15,0,0,0" Click="DecryptButton_OnClick"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

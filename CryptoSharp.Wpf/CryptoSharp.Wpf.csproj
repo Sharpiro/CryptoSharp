@@ -63,17 +63,28 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\EncryptionControl.xaml.cs">
+      <DependentUpon>EncryptionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HashingUserControl.xaml.cs">
+      <DependentUpon>HashingUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MessageBoxFacade.cs" />
     <Compile Include="Models\BytesStringDisplay.cs" />
     <Compile Include="Models\CryptoSource.cs" />
     <Compile Include="Tools\EnumBooleanConverter.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\HashingControlViewModel.cs" />
+    <Compile Include="ViewModels\EncryptionControlViewModel.cs" />
+    <Compile Include="ViewModels\PageOwnerViewModel.cs" />
     <Compile Include="Windows\InputControl.xaml.cs">
       <DependentUpon>InputControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PageOwner.xaml.cs">
+      <DependentUpon>PageOwner.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -104,11 +115,23 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\EncryptionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\HashingUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\InputControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\PageOwner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

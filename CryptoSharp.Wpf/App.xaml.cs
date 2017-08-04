@@ -16,8 +16,9 @@ namespace CryptoSharp.Wpf
             {
                 (string key, string iv) = GetAesConfig();
 
-                var viewModel = new MainWindowViewModel { KeyString = key, IVString = iv };
-                var window = new MainWindow(viewModel);
+                var viewModel = new EncryptionControlViewModel { KeyString = key, IVString = iv };
+                //var window = new MainWindow(viewModel);
+                var window = new PageOwner();
                 window.Show();
             }
             catch (Exception ex)

@@ -1,24 +1,25 @@
-﻿using CryptoSharp.Hashing;
-using CryptoSharp.Wpf.Models;
-using CryptoSharp.Wpf.ViewModels;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using CryptoSharp.Hashing;
 using CryptoSharp.Symmetric;
-using System.Linq;
+using CryptoSharp.Wpf.Models;
+using CryptoSharp.Wpf.ViewModels;
+using CryptoSharp.Wpf.Windows;
+using Microsoft.Win32;
 
-namespace CryptoSharp.Wpf.Windows
+namespace CryptoSharp.Wpf.Controls
 {
-    public partial class MainWindow
+    public partial class EncryptionControl
     {
         private readonly EncryptionControlViewModel _viewModel;
         private readonly MessageBoxFacade _messageBox = new MessageBoxFacade();
         private readonly AesService _aesService = new AesService(new Sha256BitHasher(), new MDFive128BitHasher());
 
-        public MainWindow(EncryptionControlViewModel viewModel)
+        public EncryptionControl(EncryptionControlViewModel viewModel)
         {
             InitializeComponent();
             DataContext = _viewModel = viewModel;
@@ -114,7 +115,7 @@ namespace CryptoSharp.Wpf.Windows
                     Width = 275,
                     Height = 150,
                     Content = inputControl,
-                    Owner = this,
+                    //Owner = this,
                     ShowInTaskbar = false,
                     ResizeMode = ResizeMode.NoResize,
                     Icon = new BitmapImage(new Uri("pack://application:,,,/content/cryptolock.png"))
@@ -152,7 +153,7 @@ namespace CryptoSharp.Wpf.Windows
             var bytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
             var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
             _viewModel.OutputText = _viewModel.BytesStringDisplay == BytesStringDisplay.Base64 ?
-            Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X")).StringJoin(" ");
+                Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X")).StringJoin(" ");
         }
 
         private void DecryptFile()
