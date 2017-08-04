@@ -10,7 +10,7 @@ namespace CryptoSharp.Tests46
     public class RsaServiceTests
     {
         [TestMethod]
-        public void TestTest()
+        public void KeyDeliveryTest()
         {
             //const string plainText = "this is the test plain data";
             var aesService = new AesService();

@@ -1,9 +1,9 @@
-﻿using CryptoSharp.Hashing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Text;
+using CryptoSharp.Hashing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace CryptoSharp.Tests
+namespace CryptoSharp.Tests46
 {
     [TestClass]
     public class HashingTests
