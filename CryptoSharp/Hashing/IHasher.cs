@@ -5,7 +5,13 @@
         byte[] CreateHash(byte[] plainBytes);
     }
 
-    public interface I256BitHasher : IHasher { }
+    public interface IAtLeast128BitHasher : IHasher { }
 
-    public interface I128BitHasher : IHasher { }
+    public interface IAtLeast256BitHasher : IAtLeast128BitHasher { }
+
+    public interface I128BitHasher : IAtLeast128BitHasher { }
+
+    public interface I160BitHasher : IAtLeast128BitHasher { }
+
+    public interface I256BitHasher : IAtLeast256BitHasher { }
 }

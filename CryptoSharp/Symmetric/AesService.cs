@@ -4,15 +4,16 @@ using System.Security.Cryptography;
 using System.Text;
 using CryptoSharp.Hashing;
 using CryptoSharp.Tools;
+using System.Linq;
 
 namespace CryptoSharp.Symmetric
 {
     public class AesService
     {
-        private readonly I256BitHasher _keyHasher;
-        private readonly I128BitHasher _ivHasher;
+        private readonly IAtLeast256BitHasher _keyHasher;
+        private readonly IAtLeast128BitHasher _ivHasher;
 
-        public AesService(I256BitHasher keyHasher, I128BitHasher ivHasher)
+        public AesService(IAtLeast256BitHasher keyHasher, IAtLeast128BitHasher ivHasher)
         {
             _keyHasher = keyHasher ?? throw new ArgumentNullException(nameof(keyHasher));
             _ivHasher = ivHasher ?? throw new ArgumentNullException(nameof(keyHasher));
@@ -20,7 +21,7 @@ namespace CryptoSharp.Symmetric
 
         public AesService()
         {
-            _keyHasher = new Sha256Hasher();
+            _keyHasher = new Sha256BitHasher();
             _ivHasher = new MDFive128BitHasher();
         }
 
@@ -39,8 +40,8 @@ namespace CryptoSharp.Symmetric
             if (string.IsNullOrEmpty(plainTextKey)) throw new ArgumentNullException(nameof(plainTextKey));
 
             var plainTextKeyBytes = Encoding.UTF8.GetBytes(plainTextKey);
-            var key = _keyHasher.CreateHash(plainTextKeyBytes);
-            var iv = _ivHasher.CreateHash(plainTextKeyBytes);
+            var key = _keyHasher.CreateHash(plainTextKeyBytes).Take(32).ToArray();
+            var iv = _ivHasher.CreateHash(plainTextKeyBytes).Take(16).ToArray();
             return (key, iv);
         }
 

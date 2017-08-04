@@ -10,7 +10,7 @@ namespace CryptoSharp.Tests
     public class AesServiceTests
     {
         private readonly AesService _aesService;
-        private readonly I256BitHasher _keyHasher = new Sha256Hasher();
+        private readonly I256BitHasher _keyHasher = new Sha256BitHasher();
         private readonly I128BitHasher _ivHasher = new MDFive128BitHasher();
 
         public AesServiceTests()

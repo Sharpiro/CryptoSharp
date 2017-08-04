@@ -8,7 +8,7 @@ namespace CryptoSharp.Tests
     [TestClass]
     public class HashingTests
     {
-        private readonly IHasher _hasher= new Sha256Hasher();
+        private readonly IHasher _hasher= new Sha256BitHasher();
 
         [TestMethod]
         public void Sha256CreateHashTest()
