@@ -1,15 +1,16 @@
-using CryptoSharp.Hashing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Text;
+using CryptoSharp.Hashing;
+using CryptoSharp.Symmetric;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace CryptoSharp.Tests
+namespace CryptoSharp.Tests46
 {
     [TestClass]
     public class AesServiceTests
     {
         private readonly AesService _aesService;
-        private readonly I256BitHasher _keyHasher = new Sha256Hasher();
+        private readonly I256BitHasher _keyHasher = new Sha256BitHasher();
         private readonly I128BitHasher _ivHasher = new MDFive128BitHasher();
 
         public AesServiceTests()

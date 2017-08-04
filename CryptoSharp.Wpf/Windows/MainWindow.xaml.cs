@@ -1,15 +1,14 @@
 ﻿using CryptoSharp.Hashing;
-using CryptoSharp.Tools;
 using CryptoSharp.Wpf.Models;
 using CryptoSharp.Wpf.ViewModels;
 using Microsoft.Win32;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CryptoSharp.Symmetric;
+using System.Linq;
 
 namespace CryptoSharp.Wpf.Windows
 {
@@ -17,7 +16,7 @@ namespace CryptoSharp.Wpf.Windows
     {
         private readonly MainWindowViewModel _viewModel;
         private readonly MessageBoxFacade _messageBox = new MessageBoxFacade();
-        private readonly AesService _aesService = new AesService(new Sha256Hasher(), new MDFive128BitHasher());
+        private readonly AesService _aesService = new AesService(new Sha256BitHasher(), new MDFive128BitHasher());
 
         public MainWindow(MainWindowViewModel viewModel)
         {
@@ -152,10 +151,8 @@ namespace CryptoSharp.Wpf.Windows
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
             var bytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
             var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
-            var crypto64 = Convert.ToBase64String(cryptoBytes);
-            //var hexString = cryptoBytes.Select(b => b.ToString("X")).StringJoin(" ");
-            _viewModel.OutputText = crypto64;
-            //_viewModel.OutputText = hexString;
+            _viewModel.OutputText = _viewModel.BytesStringDisplay == BytesStringDisplay.Base64 ?
+            Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X")).StringJoin(" ");
         }
 
         private void DecryptFile()
@@ -177,6 +174,20 @@ namespace CryptoSharp.Wpf.Windows
             var plainBytes = _aesService.Decrypt(bytes, _viewModel.Key, _viewModel.IV);
             var plainText = Encoding.UTF8.GetString(plainBytes);
             _viewModel.OutputText = plainText;
+        }
+
+        private void BytesDisplayType_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(_viewModel.OutputText)) return;
+
+                EncryptText();
+            }
+            catch (Exception ex)
+            {
+                _messageBox.ShowError(ex);
+            }
         }
     }
 }

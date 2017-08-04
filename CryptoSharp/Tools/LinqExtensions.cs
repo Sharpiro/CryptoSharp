@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CryptoSharp.Tools
+namespace System.Linq
 {
     public static class LinqExtensions
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Windows;
+using CryptoSharp.Symmetric;
 using CryptoSharp.Wpf.ViewModels;
 using CryptoSharp.Wpf.Windows;
 
