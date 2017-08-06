@@ -70,7 +70,7 @@
       <DependentUpon>HashingUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MessageBoxFacade.cs" />
-    <Compile Include="Models\BytesStringDisplay.cs" />
+    <Compile Include="Models\BytesDisplayType.cs" />
     <Compile Include="Models\CryptoSource.cs" />
     <Compile Include="Tools\EnumBooleanConverter.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />

@@ -12,7 +12,7 @@ namespace CryptoSharp.Wpf.ViewModels
         private CryptoSource _cryptoSource = CryptoSource.Text;
         private string _inputText;
         private string _outputText;
-        private BytesStringDisplay _bytesStringDisplay = BytesStringDisplay.Base64;
+        private BytesDisplayType _bytesStringDisplay = BytesDisplayType.Base64;
 
         public string FilePath
         {
@@ -51,7 +51,7 @@ namespace CryptoSharp.Wpf.ViewModels
             set { _outputText = value; OnPropertyChanged(); }
         }
         public string MarkPath => FileExists ? "/content/checkmark.png" : "/content/exmark.png";
-        public BytesStringDisplay BytesStringDisplay
+        public BytesDisplayType BytesStringDisplay
         {
             get => _bytesStringDisplay;
             set { _bytesStringDisplay = value; OnPropertyChanged(); }

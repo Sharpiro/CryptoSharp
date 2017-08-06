@@ -1,6 +1,6 @@
 ﻿namespace CryptoSharp.Wpf.Models
 {
-    public enum BytesStringDisplay
+    public enum BytesDisplayType
     {
         Hex,
         Base64

@@ -152,7 +152,7 @@ namespace CryptoSharp.Wpf.Controls
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
             var bytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
             var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
-            _viewModel.OutputText = _viewModel.BytesStringDisplay == BytesStringDisplay.Base64 ?
+            _viewModel.OutputText = _viewModel.BytesStringDisplay == BytesDisplayType.Base64 ?
                 Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X")).StringJoin(" ");
         }
 

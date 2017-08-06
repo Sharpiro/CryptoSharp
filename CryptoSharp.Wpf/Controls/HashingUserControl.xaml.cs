@@ -70,7 +70,7 @@ namespace CryptoSharp.Wpf.Controls
                 _viewModel.OutputText = null;
                 return;
             }
-            _viewModel.InputText = _viewModel.InputText.Replace("\\0", "\0");
+            _viewModel.InputText = _viewModel.InputText.Replace("\\0", "\0").Replace("\\r\\n", "\r\n");
             var inputBytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
             var hashedBytes = _hasher.CreateHash(inputBytes);
             _viewModel.OutputText = GetFormattedHash(hashedBytes);
@@ -116,7 +116,6 @@ namespace CryptoSharp.Wpf.Controls
         {
             try
             {
-                //_hasher = _hasherFactory.CreateHasher(_viewModel.SelectedHasherType);
                 if (_viewModel.IsTextSource) HashText(); else HashFile();
             }
             catch (Exception ex)
