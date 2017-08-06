@@ -13,9 +13,8 @@ namespace CryptoSharp.Wpf.ViewModels
         private CryptoSource _cryptoSource = CryptoSource.Text;
         private string _inputText;
         private string _outputText;
-        private BytesDisplayType _bytesStringDisplay = BytesDisplayType.Base64;
-        private HasherType _selectedHasherType = HasherType.SHA1;
-        private HashDisplayType _selectedHashDisplayType = HashDisplayType.Base64;
+        private HasherType _selectedHasherType = HasherType.None;
+        private BytesDisplayType _selectedBytesDisplayType = BytesDisplayType.Hex;
 
         public string InputText
         {
@@ -36,23 +35,17 @@ namespace CryptoSharp.Wpf.ViewModels
             set { _outputText = value; OnPropertyChanged(); }
         }
         public string MarkPath => FileExists ? "/content/checkmark.png" : "/content/exmark.png";
-        public BytesDisplayType BytesStringDisplay
-        {
-            get => _bytesStringDisplay;
-            set { _bytesStringDisplay = value; OnPropertyChanged(); }
-        }
         public HasherType SelectedHasherType
         {
             get => _selectedHasherType;
             set { _selectedHasherType = value; OnPropertyChanged(); }
         }
-        public HashDisplayType SelectedHashDisplayType
+        public BytesDisplayType SelectedBytesDisplayType
         {
-            get => _selectedHashDisplayType;
-            set { _selectedHashDisplayType = value; OnPropertyChanged(); }
+            get => _selectedBytesDisplayType;
+            set { _selectedBytesDisplayType = value; OnPropertyChanged(); }
         }
-
         public IEnumerable<HasherType> HasherTypes => Enum.GetValues(typeof(HasherType)).Cast<HasherType>();
-        public IEnumerable<HashDisplayType> HashDisplayTypes => Enum.GetValues(typeof(HashDisplayType)).Cast<HashDisplayType>();
+        public IEnumerable<BytesDisplayType> BytesDisplayTypes => Enum.GetValues(typeof(BytesDisplayType)).Cast<BytesDisplayType>();
     }
 }

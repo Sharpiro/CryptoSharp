@@ -19,5 +19,5 @@ namespace CryptoSharp.Hashing
     }
 
     public enum HasherType { None, MD5, SHA1, SHA256 }
-    public enum HashDisplayType { Base64, Hex, Guid }
+    //public enum BytesDisplayType { Base64, Hex, Guid }
 }

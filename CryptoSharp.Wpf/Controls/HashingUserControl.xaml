@@ -28,7 +28,7 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="115,15,0,0" HorizontalAlignment="Left">
-                <ComboBox SelectedItem="{Binding SelectedHashDisplayType}" ItemsSource="{Binding HashDisplayTypes}" SelectionChanged="HashDisplayType_OnSelectionChanged" Width="125" Margin="15,0,0,0"/>
+                <ComboBox SelectedItem="{Binding SelectedBytesDisplayType}" ItemsSource="{Binding BytesDisplayTypes}" SelectionChanged="BytesDisplayType_OnSelectionChanged" Width="125" Margin="15,0,0,0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
                 <TextBlock Text="Output:" Width="50"/>

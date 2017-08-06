@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using CryptoSharp.Hashing;
 using CryptoSharp.Wpf.ViewModels;
 using Microsoft.Win32;
+using CryptoSharp.Models;
 
 namespace CryptoSharp.Wpf.Controls
 {
@@ -90,12 +91,12 @@ namespace CryptoSharp.Wpf.Controls
 
         private string GetFormattedHash(byte[] bytes)
         {
-            switch (_viewModel.SelectedHashDisplayType)
+            switch (_viewModel.SelectedBytesDisplayType)
             {
-                case HashDisplayType.Base64: return Convert.ToBase64String(bytes);
-                case HashDisplayType.Hex: return bytes.Select(b => b.ToString("X")).StringJoin(" ");
-                case HashDisplayType.Guid: return new Guid(bytes.Take(16).ToArray()).ToString();
-                default: throw new ArgumentOutOfRangeException($"Unable to determine hash display type for: '{_viewModel.SelectedHashDisplayType}'");
+                case BytesDisplayType.Base64: return Convert.ToBase64String(bytes);
+                case BytesDisplayType.Hex: return bytes.Select(b => b.ToString("X")).StringJoin(" ");
+                case BytesDisplayType.Guid: return new Guid(bytes.Take(16).ToArray()).ToString();
+                default: throw new ArgumentOutOfRangeException($"Unable to determine hash display type for: '{_viewModel.SelectedBytesDisplayType}'");
             }
         }
 
@@ -112,7 +113,7 @@ namespace CryptoSharp.Wpf.Controls
             }
         }
 
-        private void HashDisplayType_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void BytesDisplayType_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
