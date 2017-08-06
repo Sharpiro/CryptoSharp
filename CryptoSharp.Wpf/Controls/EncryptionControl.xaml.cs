@@ -10,6 +10,7 @@ using CryptoSharp.Wpf.Models;
 using CryptoSharp.Wpf.ViewModels;
 using CryptoSharp.Wpf.Windows;
 using Microsoft.Win32;
+using CryptoSharp.Models;
 
 namespace CryptoSharp.Wpf.Controls
 {
@@ -21,6 +22,7 @@ namespace CryptoSharp.Wpf.Controls
 
         public EncryptionControl(EncryptionControlViewModel viewModel)
         {
+            var x= CryptoSharp.Models.BytesDisplayType.Base64;
             InitializeComponent();
             DataContext = _viewModel = viewModel;
         }

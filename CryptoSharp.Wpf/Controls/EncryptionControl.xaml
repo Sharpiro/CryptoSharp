@@ -5,12 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CryptoSharp.Wpf.Controls"
              xmlns:tools="clr-namespace:CryptoSharp.Wpf.Tools"
-             xmlns:models="clr-namespace:CryptoSharp.Wpf.Models"
+             xmlns:wpfModels="clr-namespace:CryptoSharp.Wpf.Models"
+             xmlns:models="clr-namespace:CryptoSharp.Models;assembly=CryptoSharp"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <tools:EnumBooleanConverter x:Key="EnumBooleanConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <!--<models:BytesDisplayType x:Key="BytesDisplayType" />-->
     </UserControl.Resources>
     <Grid>
         <StackPanel Margin="15">
@@ -34,12 +36,12 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <RadioButton Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:CryptoSource.File}}"/>
-                    <RadioButton Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:CryptoSource.Text}}" Margin="15,0,0,0"/>
+                    <RadioButton Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:CryptoSource.File}}"/>
+                    <RadioButton Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:CryptoSource.Text}}" Margin="15,0,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="300,0,0,0">
-                    <RadioButton Content="Hex" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesDisplayType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Hex}}"/>
-                    <RadioButton Content="Base64" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesDisplayType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Base64}}" Margin="15,0,0,0"/>
+                    <RadioButton Content="Hex" Checked="BytesDisplayType_Checked" IsChecked="{Binding xxx, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Hex}}"/>
+                    <RadioButton Content="Base64" Checked="BytesDisplayType_Checked" IsChecked="{Binding yyy, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Base64}}" Margin="15,0,0,0"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="0,5,0,0" Orientation="Horizontal" IsEnabled="{Binding IsTextSource}">

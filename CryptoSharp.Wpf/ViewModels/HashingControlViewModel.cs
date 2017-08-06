@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using CryptoSharp.Hashing;
 using CryptoSharp.Wpf.Models;
+using CryptoSharp.Models;
 
 namespace CryptoSharp.Wpf.ViewModels
 {

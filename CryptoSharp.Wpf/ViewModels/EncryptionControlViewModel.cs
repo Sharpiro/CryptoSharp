@@ -1,4 +1,5 @@
-﻿using CryptoSharp.Wpf.Models;
+﻿using CryptoSharp.Models;
+using CryptoSharp.Wpf.Models;
 using System;
 using System.IO;
 
