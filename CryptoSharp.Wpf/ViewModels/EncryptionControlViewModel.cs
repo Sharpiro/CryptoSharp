@@ -1,12 +1,11 @@
-﻿using CryptoSharp.Wpf.Models;
+﻿using CryptoSharp.Models;
+using CryptoSharp.Wpf.Models;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 
 namespace CryptoSharp.Wpf.ViewModels
 {
-    public class MainWindowViewModel : BaseViewModel
+    public class EncryptionControlViewModel : BaseViewModel
     {
         private string _filePath;
         private string _keyString;
@@ -14,7 +13,7 @@ namespace CryptoSharp.Wpf.ViewModels
         private CryptoSource _cryptoSource = CryptoSource.Text;
         private string _inputText;
         private string _outputText;
-        private BytesStringDisplay _bytesStringDisplay = BytesStringDisplay.Base64;
+        private BytesDisplayType _bytesStringDisplay = BytesDisplayType.Base64;
 
         public string FilePath
         {
@@ -32,8 +31,8 @@ namespace CryptoSharp.Wpf.ViewModels
             set { _ivString = value; OnPropertyChanged(); OnPropertyChanged(nameof(IV)); }
         }
 
-        public byte[] Key => Convert.FromBase64String(_keyString);
-        public byte[] IV => Convert.FromBase64String(_ivString);
+        public byte[] Key => string.IsNullOrEmpty(_keyString) ? null : Convert.FromBase64String(_keyString);
+        public byte[] IV => string.IsNullOrEmpty(_ivString) ? null : Convert.FromBase64String(_ivString);
         public bool FileExists => File.Exists(_filePath);
         public CryptoSource CryptoSource
         {
@@ -52,9 +51,8 @@ namespace CryptoSharp.Wpf.ViewModels
             get => _outputText;
             set { _outputText = value; OnPropertyChanged(); }
         }
-        public string Title => $"CryptoSharp-{FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion}";
         public string MarkPath => FileExists ? "/content/checkmark.png" : "/content/exmark.png";
-        public BytesStringDisplay BytesStringDisplay
+        public BytesDisplayType BytesStringDisplay
         {
             get => _bytesStringDisplay;
             set { _bytesStringDisplay = value; OnPropertyChanged(); }

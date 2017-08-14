@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="CryptoSharp.Wpf.Controls.HashingUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CryptoSharp.Wpf.Controls"
+             xmlns:tools="clr-namespace:CryptoSharp.Wpf.Tools"
+             xmlns:models="clr-namespace:CryptoSharp.Wpf.Models"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <tools:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <StackPanel Margin="15">
+            <StackPanel Orientation="Horizontal">
+                <RadioButton Width="50" Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:CryptoSource.File}}" Checked="ToggleButton_OnChecked"/>
+                <RadioButton Width="50" Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:CryptoSource.Text}}" Checked="ToggleButton_OnChecked" Margin="15,0,0,0"/>
+                <ComboBox SelectedItem="{Binding SelectedHasherType}" ItemsSource="{Binding HasherTypes}" SelectionChanged="HasherType_OnSelectionChanged" Width="125" Margin="15,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                <TextBlock Text="Input:" Width="50"/>
+                <TextBox Name="InputTextBox" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" Width="400" Height="25" TextChanged="InputTextBox_OnTextChanged"/>
+                <Button Name="BrowseButton" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Browse" Width="75" Margin="15,0,0,0" Click="BrowseButton_Click"/>
+                <StackPanel Width="25" Margin="15,0,0,0">
+                    <Image Width="25" Height="20" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Source="{Binding MarkPath}"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="115,15,0,0" HorizontalAlignment="Left">
+                <ComboBox SelectedItem="{Binding SelectedBytesDisplayType}" ItemsSource="{Binding BytesDisplayTypes}" SelectionChanged="BytesDisplayType_OnSelectionChanged" Width="125" Margin="15,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                <TextBlock Text="Output:" Width="50"/>
+                <TextBox Text="{Binding OutputText}" Width="400" Height="25"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

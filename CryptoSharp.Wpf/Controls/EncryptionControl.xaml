@@ -1,16 +1,19 @@
-﻿<Window x:Class="CryptoSharp.Wpf.Windows.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CryptoSharp.Wpf.Models"
-        xmlns:tools="clr-namespace:CryptoSharp.Wpf.Tools"
-        mc:Ignorable="d"
-        Title="{Binding Title}" Height="300" Width="675" WindowStartupLocation="CenterScreen" Icon="/content/cryptolock.png">
-    <Window.Resources>
+﻿<UserControl x:Class="CryptoSharp.Wpf.Controls.EncryptionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CryptoSharp.Wpf.Controls"
+             xmlns:tools="clr-namespace:CryptoSharp.Wpf.Tools"
+             xmlns:wpfModels="clr-namespace:CryptoSharp.Wpf.Models"
+             xmlns:models="clr-namespace:CryptoSharp.Models;assembly=CryptoSharp"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
         <tools:EnumBooleanConverter x:Key="EnumBooleanConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    </Window.Resources>
+        <!--<models:BytesDisplayType x:Key="BytesDisplayType" />-->
+    </UserControl.Resources>
     <Grid>
         <StackPanel Margin="15">
             <StackPanel Orientation="Horizontal">
@@ -33,12 +36,12 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <RadioButton Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:CryptoSource.File}}"/>
-                    <RadioButton Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:CryptoSource.Text}}" Margin="15,0,0,0"/>
+                    <RadioButton Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:CryptoSource.File}}"/>
+                    <RadioButton Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:CryptoSource.Text}}" Margin="15,0,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="300,0,0,0">
-                    <RadioButton Content="Hex" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesStringDisplay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:BytesStringDisplay.Hex}}"/>
-                    <RadioButton Content="Base64" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesStringDisplay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:BytesStringDisplay.Base64}}" Margin="15,0,0,0"/>
+                    <RadioButton Content="Hex" Checked="BytesDisplayType_Checked" IsChecked="{Binding xxx, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Hex}}"/>
+                    <RadioButton Content="Base64" Checked="BytesDisplayType_Checked" IsChecked="{Binding yyy, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Base64}}" Margin="15,0,0,0"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="0,5,0,0" Orientation="Horizontal" IsEnabled="{Binding IsTextSource}">
@@ -57,4 +60,4 @@
             </StackPanel>
         </StackPanel>
     </Grid>
-</Window>
+</UserControl>

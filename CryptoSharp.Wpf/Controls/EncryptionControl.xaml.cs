@@ -1,25 +1,28 @@
-﻿using CryptoSharp.Hashing;
-using CryptoSharp.Wpf.Models;
-using CryptoSharp.Wpf.ViewModels;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using CryptoSharp.Hashing;
 using CryptoSharp.Symmetric;
-using System.Linq;
+using CryptoSharp.Wpf.Models;
+using CryptoSharp.Wpf.ViewModels;
+using CryptoSharp.Wpf.Windows;
+using Microsoft.Win32;
+using CryptoSharp.Models;
 
-namespace CryptoSharp.Wpf.Windows
+namespace CryptoSharp.Wpf.Controls
 {
-    public partial class MainWindow
+    public partial class EncryptionControl
     {
-        private readonly MainWindowViewModel _viewModel;
+        private readonly EncryptionControlViewModel _viewModel;
         private readonly MessageBoxFacade _messageBox = new MessageBoxFacade();
         private readonly AesService _aesService = new AesService(new Sha256BitHasher(), new MDFive128BitHasher());
 
-        public MainWindow(MainWindowViewModel viewModel)
+        public EncryptionControl(EncryptionControlViewModel viewModel)
         {
+            var x= CryptoSharp.Models.BytesDisplayType.Base64;
             InitializeComponent();
             DataContext = _viewModel = viewModel;
         }
@@ -114,7 +117,7 @@ namespace CryptoSharp.Wpf.Windows
                     Width = 275,
                     Height = 150,
                     Content = inputControl,
-                    Owner = this,
+                    //Owner = this,
                     ShowInTaskbar = false,
                     ResizeMode = ResizeMode.NoResize,
                     Icon = new BitmapImage(new Uri("pack://application:,,,/content/cryptolock.png"))
@@ -151,8 +154,8 @@ namespace CryptoSharp.Wpf.Windows
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
             var bytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
             var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
-            _viewModel.OutputText = _viewModel.BytesStringDisplay == BytesStringDisplay.Base64 ?
-            Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X")).StringJoin(" ");
+            _viewModel.OutputText = _viewModel.BytesStringDisplay == BytesDisplayType.Base64 ?
+                Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X")).StringJoin(" ");
         }
 
         private void DecryptFile()
