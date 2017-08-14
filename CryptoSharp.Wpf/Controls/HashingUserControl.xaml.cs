@@ -94,7 +94,8 @@ namespace CryptoSharp.Wpf.Controls
             switch (_viewModel.SelectedBytesDisplayType)
             {
                 case BytesDisplayType.Base64: return Convert.ToBase64String(bytes);
-                case BytesDisplayType.Hex: return bytes.Select(b => b.ToString("X")).StringJoin(" ");
+                case BytesDisplayType.Hex: return bytes.Select(b => b.ToString("X2")).StringJoin(" ");
+                case BytesDisplayType.HexSquished: return bytes.Select(b => b.ToString("X2")).StringJoin("");
                 case BytesDisplayType.Guid: return new Guid(bytes.Take(16).ToArray()).ToString();
                 default: throw new ArgumentOutOfRangeException($"Unable to determine hash display type for: '{_viewModel.SelectedBytesDisplayType}'");
             }

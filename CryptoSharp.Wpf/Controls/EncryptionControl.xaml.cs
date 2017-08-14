@@ -155,7 +155,7 @@ namespace CryptoSharp.Wpf.Controls
             var bytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
             var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
             _viewModel.OutputText = _viewModel.BytesStringDisplay == BytesDisplayType.Base64 ?
-                Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X")).StringJoin(" ");
+                Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X2")).StringJoin(" ");
         }
 
         private void DecryptFile()

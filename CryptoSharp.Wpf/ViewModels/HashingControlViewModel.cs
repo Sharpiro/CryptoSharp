@@ -13,13 +13,24 @@ namespace CryptoSharp.Wpf.ViewModels
         private CryptoSource _cryptoSource = CryptoSource.Text;
         private string _inputText;
         private string _outputText;
+        private string _compareText;
         private HasherType _selectedHasherType = HasherType.None;
         private BytesDisplayType _selectedBytesDisplayType = BytesDisplayType.Hex;
 
         public string InputText
         {
             get => _inputText;
-            set { _inputText = value; OnPropertyChanged(); OnPropertyChanged(nameof(MarkPath)); }
+            set { _inputText = value; OnPropertyChanged(); OnPropertyChanged(nameof(FileExistsMarkPath)); }
+        }
+        public string OutputText
+        {
+            get => _outputText;
+            set { _outputText = value; OnPropertyChanged(); OnPropertyChanged(nameof(CompareMatchesMarkPath)); }
+        }
+        public string CompareText
+        {
+            get => _compareText;
+            set { _compareText = value; OnPropertyChanged(); OnPropertyChanged(nameof(CompareMatchesMarkPath)); }
         }
         public bool FileExists => File.Exists(_inputText);
         public CryptoSource CryptoSource
@@ -29,12 +40,8 @@ namespace CryptoSharp.Wpf.ViewModels
         }
         public bool IsFileSource => _cryptoSource == CryptoSource.File;
         public bool IsTextSource => _cryptoSource == CryptoSource.Text;
-        public string OutputText
-        {
-            get => _outputText;
-            set { _outputText = value; OnPropertyChanged(); }
-        }
-        public string MarkPath => FileExists ? "/content/checkmark.png" : "/content/exmark.png";
+        public string FileExistsMarkPath => FileExists ? "/content/checkmark.png" : "/content/exmark.png";
+        public string CompareMatchesMarkPath => CompareMatches ? "/content/checkmark.png" : "/content/exmark.png";
         public HasherType SelectedHasherType
         {
             get => _selectedHasherType;
@@ -47,5 +54,6 @@ namespace CryptoSharp.Wpf.ViewModels
         }
         public IEnumerable<HasherType> HasherTypes => Enum.GetValues(typeof(HasherType)).Cast<HasherType>();
         public IEnumerable<BytesDisplayType> BytesDisplayTypes => Enum.GetValues(typeof(BytesDisplayType)).Cast<BytesDisplayType>();
+        public bool CompareMatches => _outputText?.Equals(_compareText, StringComparison.InvariantCultureIgnoreCase) ?? false;
     }
 }
