@@ -22,9 +22,15 @@ namespace CryptoSharp.Wpf.Controls
 
         public EncryptionControl(EncryptionControlViewModel viewModel)
         {
-            var x= CryptoSharp.Models.BytesDisplayType.Base64;
             InitializeComponent();
             DataContext = _viewModel = viewModel;
+        }
+
+        private void EncryptionControl_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            (byte[] key, byte[] iv) = _aesService.CreateKey();
+            _viewModel.KeyString = Convert.ToBase64String(key);
+            _viewModel.IVString = Convert.ToBase64String(iv);
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -173,8 +179,10 @@ namespace CryptoSharp.Wpf.Controls
         private void DecryptText()
         {
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
-            var bytes = Convert.FromBase64String(_viewModel.InputText);
-            var plainBytes = _aesService.Decrypt(bytes, _viewModel.Key, _viewModel.IV);
+
+            var cryptoBytes = _viewModel.BytesStringDisplay == BytesDisplayType.Base64 ?
+                Convert.FromBase64String(_viewModel.InputText) : _viewModel.InputText.Split(new[] { " " }, StringSplitOptions.None).Select(hexString => Convert.ToByte(hexString, 16)).ToArray();
+            var plainBytes = _aesService.Decrypt(cryptoBytes, _viewModel.Key, _viewModel.IV);
             var plainText = Encoding.UTF8.GetString(plainBytes);
             _viewModel.OutputText = plainText;
         }
