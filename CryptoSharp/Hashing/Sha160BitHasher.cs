@@ -2,7 +2,7 @@
 
 namespace CryptoSharp.Hashing
 {
-    class Sha160BitHasher : I160BitHasher
+    public class Sha160BitHasher : I160BitHasher
     {
         public byte[] CreateHash(byte[] plainBytes)
         {

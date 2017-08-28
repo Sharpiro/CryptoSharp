@@ -86,6 +86,8 @@ namespace CryptoSharp.Wpf.Controls
             }
             var inputBytes = File.ReadAllBytes(_viewModel.InputText);
             var hashedBytes = _hasher.CreateHash(inputBytes);
+            if (hashedBytes.Length > 100) throw new InvalidOperationException("Max hash size is 100");
+
             _viewModel.OutputText = GetFormattedHash(hashedBytes);
         }
 
