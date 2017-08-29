@@ -37,10 +37,7 @@ namespace CryptoSharp.Wpf
             var iv64String = ConfigurationManager.AppSettings["IV"];
 
             if (string.IsNullOrEmpty(key64String) && string.IsNullOrEmpty(iv64String))
-            {
-                (byte[] key, byte[] iv) = new AesService().CreateKey();
-                return (Convert.ToBase64String(key), Convert.ToBase64String(iv));
-            }
+                return (null, null);
 
             if (string.IsNullOrEmpty(key64String) || string.IsNullOrEmpty(iv64String))
                 throw new ConfigurationErrorsException("When providing keys in the config, you must specify either no data, or both a key and an iv");
