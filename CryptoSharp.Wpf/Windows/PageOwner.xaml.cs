@@ -1,4 +1,5 @@
-﻿using CryptoSharp.Wpf.Controls;
+﻿using System;
+using CryptoSharp.Wpf.Controls;
 using CryptoSharp.Wpf.ViewModels;
 
 namespace CryptoSharp.Wpf.Windows
@@ -7,11 +8,11 @@ namespace CryptoSharp.Wpf.Windows
     {
         private readonly PageOwnerViewModel _viewModel = new PageOwnerViewModel();
 
-        public PageOwner()
+        public PageOwner(EncryptionControl encryptionControl)
         {
             InitializeComponent();
             DataContext = _viewModel;
-            EncryptionTab.Content = new EncryptionControl(new EncryptionControlViewModel());
+            EncryptionTab.Content = encryptionControl ?? throw new ArgumentNullException(nameof(encryptionControl));
             HashingTab.Content = new HashingUserControl(new HashingControlViewModel());
         }
     }

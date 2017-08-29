@@ -8,11 +8,10 @@
              xmlns:wpfModels="clr-namespace:CryptoSharp.Wpf.Models"
              xmlns:models="clr-namespace:CryptoSharp.Models;assembly=CryptoSharp"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="EncryptionControl_OnLoaded">
+             d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <tools:EnumBooleanConverter x:Key="EnumBooleanConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <!--<models:BytesDisplayType x:Key="BytesDisplayType" />-->
     </UserControl.Resources>
     <Grid>
         <StackPanel Margin="15">
@@ -47,11 +46,11 @@
             <StackPanel Margin="0,5,0,0" Orientation="Horizontal" IsEnabled="{Binding IsTextSource}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Input:" Width="50"/>
-                    <TextBox Text="{Binding InputText}" Width="250" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    <TextBox Text="{Binding InputText}" Width="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
                     <TextBlock Text="Output:" Width="50"/>
-                    <TextBox Text="{Binding OutputText}" Width="250" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    <TextBox Text="{Binding OutputText}" Width="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="0,15,0,0" Orientation="Horizontal">

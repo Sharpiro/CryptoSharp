@@ -26,13 +26,6 @@ namespace CryptoSharp.Wpf.Controls
             DataContext = _viewModel = viewModel;
         }
 
-        private void EncryptionControl_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            (byte[] key, byte[] iv) = _aesService.CreateKey();
-            _viewModel.KeyString = Convert.ToBase64String(key);
-            _viewModel.IVString = Convert.ToBase64String(iv);
-        }
-
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             try

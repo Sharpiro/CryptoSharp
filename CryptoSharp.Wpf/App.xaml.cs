@@ -4,6 +4,7 @@ using System.Windows;
 using CryptoSharp.Symmetric;
 using CryptoSharp.Wpf.ViewModels;
 using CryptoSharp.Wpf.Windows;
+using CryptoSharp.Wpf.Controls;
 
 namespace CryptoSharp.Wpf
 {
@@ -17,8 +18,9 @@ namespace CryptoSharp.Wpf
                 (string key, string iv) = GetAesConfig();
 
                 var viewModel = new EncryptionControlViewModel { KeyString = key, IVString = iv };
-                //var window = new MainWindow(viewModel);
-                var window = new PageOwner();
+                var encryptionControl = new EncryptionControl(viewModel);
+                var window = new PageOwner(encryptionControl);
+
                 window.Show();
             }
             catch (Exception ex)
