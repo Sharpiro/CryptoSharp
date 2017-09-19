@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CryptoSharp.Hashing;
@@ -41,16 +42,19 @@ namespace CryptoSharp.Wpf.Controls
             }
         }
 
-        private void EncryptButton_OnClick(object sender, RoutedEventArgs e)
+        private async void EncryptButton_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
                 IsEnabled = false;
                 _viewModel.OutputText = null;
-                if (_viewModel.CryptoSource == CryptoSource.File)
-                    EncryptFile();
-                else
-                    EncryptText();
+                await Task.Run(() =>
+                {
+                    if (_viewModel.CryptoSource == CryptoSource.File)
+                        EncryptFile();
+                    else
+                        EncryptText();
+                });
             }
             catch (Exception ex)
             {
@@ -62,16 +66,19 @@ namespace CryptoSharp.Wpf.Controls
             }
         }
 
-        private void DecryptButton_OnClick(object sender, RoutedEventArgs e)
+        private async void DecryptButton_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
                 IsEnabled = false;
                 _viewModel.OutputText = null;
-                if (_viewModel.CryptoSource == CryptoSource.File)
-                    DecryptFile();
-                else
-                    DecryptText();
+                await Task.Run(() =>
+                {
+                    if (_viewModel.CryptoSource == CryptoSource.File)
+                        DecryptFile();
+                    else
+                        DecryptText();
+                });
             }
             catch (Exception ex)
             {

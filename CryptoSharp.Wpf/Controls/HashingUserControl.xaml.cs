@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using CryptoSharp.Hashing;
@@ -39,15 +40,26 @@ namespace CryptoSharp.Wpf.Controls
             }
         }
 
-        private void InputTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        private async void InputTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             try
             {
-                if (_viewModel.IsTextSource) HashText(); else HashFile();
+                IsEnabled = false;
+                await Task.Run(() =>
+                {
+                    if (_viewModel.IsTextSource)
+                        HashText();
+                    else
+                        HashFile();
+                });
             }
             catch (Exception ex)
             {
                 _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
             }
         }
 
@@ -103,28 +115,46 @@ namespace CryptoSharp.Wpf.Controls
             }
         }
 
-        private void HasherType_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void HasherType_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
-                _hasher = _hasherFactory.CreateHasher(_viewModel.SelectedHasherType);
-                if (_viewModel.IsTextSource) HashText(); else HashFile();
+                IsEnabled = false;
+                await Task.Run(() =>
+                {
+                    _hasher = _hasherFactory.CreateHasher(_viewModel.SelectedHasherType);
+                    if (_viewModel.IsTextSource) HashText();
+                    else HashFile();
+                });
             }
             catch (Exception ex)
             {
                 _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
             }
         }
 
-        private void BytesDisplayType_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void BytesDisplayType_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
-                if (_viewModel.IsTextSource) HashText(); else HashFile();
+                IsEnabled = false;
+                await Task.Run(() =>
+                {
+                    if (_viewModel.IsTextSource) HashText();
+                    else HashFile();
+                });
             }
             catch (Exception ex)
             {
                 _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
             }
         }
     }

@@ -14,7 +14,7 @@ namespace CryptoSharp.Wpf.ViewModels
         private string _inputText;
         private string _outputText;
         private string _compareText;
-        private HasherType _selectedHasherType = HasherType.None;
+        private HasherType _selectedHasherType = HasherType.MD5;
         private BytesDisplayType _selectedBytesDisplayType = BytesDisplayType.Hex;
 
         public string InputText
