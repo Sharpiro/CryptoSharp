@@ -83,10 +83,20 @@ namespace CryptoSharp.Wpf.Controls
                 _viewModel.OutputText = null;
                 return;
             }
-            _viewModel.InputText = _viewModel.InputText.Replace("\\0", "\0").Replace("\\r\\n", "\r\n");
-            var inputBytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
-            var hashedBytes = _hasher.CreateHash(inputBytes);
-            _viewModel.OutputText = GetFormattedHash(hashedBytes);
+
+            try
+            {
+                var saltBytes = GetSaltBytes();
+                _viewModel.InputText = _viewModel.InputText.Replace("\\0", "\0").Replace("\\r\\n", "\r\n");
+                var inputBytes = Encoding.UTF8.GetBytes(_viewModel.InputText).Concat(saltBytes).ToArray();
+                var hashedBytes = _hasher.CreateHash(inputBytes);
+                _viewModel.OutputText = GetFormattedHash(hashedBytes);
+            }
+            catch (Exception)
+            {
+                _viewModel.OutputText = null;
+                throw;
+            }
         }
 
         private void HashFile()
@@ -96,11 +106,40 @@ namespace CryptoSharp.Wpf.Controls
                 _viewModel.OutputText = null;
                 return;
             }
-            var inputBytes = File.ReadAllBytes(_viewModel.InputText);
+
+            try
+            {
+            var saltBytes = GetSaltBytes();
+            var inputBytes = File.ReadAllBytes(_viewModel.InputText).Concat(saltBytes).ToArray();
             var hashedBytes = _hasher.CreateHash(inputBytes);
             if (hashedBytes.Length > 100) throw new InvalidOperationException("Max hash size is 100");
-
             _viewModel.OutputText = GetFormattedHash(hashedBytes);
+            }
+            catch (Exception)
+            {
+                _viewModel.OutputText = null;
+                throw;
+            }
+        }
+
+        private byte[] GetSaltBytes()
+        {
+            if (!_viewModel.UseSalt || string.IsNullOrEmpty(_viewModel.SaltText)) return new byte[0];
+            //if (_viewModel.UseSalt && string.IsNullOrEmpty(_viewModel.SaltText))
+            //    throw new InvalidOperationException("Must provide a valid salt value when 'Salt' option is enabled");
+            if (_viewModel.SaltText.Length % 2 != 0) throw new InvalidOperationException("Salt must be an even number of hex symbols");
+
+            try
+            {
+                return Enumerable.Range(0, _viewModel.SaltText.Length)
+                    .Where(x => x % 2 == 0)
+                    .Select(x => Convert.ToByte(_viewModel.SaltText.Substring(x, 2), 16))
+                    .ToArray();
+            }
+            catch
+            {
+                throw new InvalidOperationException("The salt is not valid hexadecimal where each byte is represented by exactly 2 symbols");
+            }
         }
 
         private string GetFormattedHash(byte[] bytes)
@@ -138,6 +177,48 @@ namespace CryptoSharp.Wpf.Controls
         }
 
         private async void BytesDisplayType_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                IsEnabled = false;
+                await Task.Run(() =>
+                {
+                    if (_viewModel.IsTextSource) HashText();
+                    else HashFile();
+                });
+            }
+            catch (Exception ex)
+            {
+                _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
+            }
+        }
+
+        private async void SaltCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                IsEnabled = false;
+                await Task.Run(() =>
+                {
+                    if (_viewModel.IsTextSource) HashText();
+                    else HashFile();
+                });
+            }
+            catch (Exception ex)
+            {
+                _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
+            }
+        }
+
+        private async void SaltTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             try
             {

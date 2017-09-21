@@ -7,7 +7,7 @@
              xmlns:tools="clr-namespace:CryptoSharp.Wpf.Tools"
              xmlns:models="clr-namespace:CryptoSharp.Wpf.Models"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="700" Background="White">
+             d:DesignHeight="300" d:DesignWidth="725" Background="White">
     <UserControl.Resources>
         <tools:EnumBooleanConverter x:Key="EnumBooleanConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -16,38 +16,53 @@
         <StackPanel Margin="15">
             <StackPanel Orientation="Horizontal">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Type:" Width="50" VerticalAlignment="Center"/>
+                    <TextBlock Text="Type:" Width="35" VerticalAlignment="Center"/>
                     <RadioButton VerticalAlignment="Center" Width="50" Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:CryptoSource.File}}" Checked="ToggleButton_OnChecked"/>
-                    <RadioButton VerticalAlignment="Center" Width="50" Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:CryptoSource.Text}}" Checked="ToggleButton_OnChecked" Margin="15,0,0,0"/>
+                    <RadioButton VerticalAlignment="Center" Width="50" Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:CryptoSource.Text}}" Checked="ToggleButton_OnChecked"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="15,0,0,0">
+                    <CheckBox Content="Salt" IsChecked="{Binding UseSalt}" VerticalAlignment="Center" Checked="SaltCheckBox_Checked" Unchecked="SaltCheckBox_Checked"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
                     <TextBlock Text="Algorithm:" Width="60" VerticalAlignment="Center"/>
-                    <ComboBox SelectedItem="{Binding SelectedHasherType}" ItemsSource="{Binding HasherTypes}" SelectionChanged="HasherType_OnSelectionChanged" Width="125" Margin="15,0,0,0"/>
+                    <ComboBox SelectedItem="{Binding SelectedHasherType}" ItemsSource="{Binding HasherTypes}" SelectionChanged="HasherType_OnSelectionChanged" Width="125" Margin="5,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
+                    <TextBlock Text="Display:" Width="45" VerticalAlignment="Center"/>
+                    <ComboBox SelectedItem="{Binding SelectedBytesDisplayType}" ItemsSource="{Binding BytesDisplayTypes}" SelectionChanged="BytesDisplayType_OnSelectionChanged" Width="125"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                <TextBlock Text="Input:" Width="50"/>
-                <TextBox Name="InputTextBox" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" Width="450" Height="25" TextChanged="InputTextBox_OnTextChanged"/>
-                <Button Name="BrowseButton" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Browse" Width="75" Margin="15,0,0,0" Click="BrowseButton_Click"/>
-                <StackPanel Width="25" Margin="15,0,0,0">
-                    <Image Width="25" Height="20" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Source="{Binding FileExistsMarkPath}"/>
+            <Border BorderThickness="1" BorderBrush="Black" Margin="15">
+                <StackPanel Margin="0,0,0,15">
+                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                        <TextBlock Text="Input:" Width="50" TextAlignment="Center"/>
+                        <TextBox Name="InputTextBox" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" Width="450" Height="25" TextChanged="InputTextBox_OnTextChanged"/>
+                        <Button Name="BrowseButton" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Content="Browse" Width="75" Margin="15,0,0,0" Click="BrowseButton_Click"/>
+                        <StackPanel Width="25" Margin="15,0,0,0">
+                            <Image Width="25" Height="20" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Source="{Binding FileExistsMarkPath}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Margin="0,15,0,0" Orientation="Horizontal" IsEnabled="{Binding UseSalt}">
+                        <TextBlock Text="Salt:" Width="50" TextAlignment="Center"/>
+                        <TextBox Text="{Binding SaltText, UpdateSourceTrigger=PropertyChanged}" Width="450" Height="25" TextChanged="SaltTextBox_TextChanged"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Margin="50,15,0,0" Orientation="Horizontal">
-                <TextBlock Text="Format:" Width="55" VerticalAlignment="Center"/>
-                <ComboBox SelectedItem="{Binding SelectedBytesDisplayType}" ItemsSource="{Binding BytesDisplayTypes}" SelectionChanged="BytesDisplayType_OnSelectionChanged" Width="125"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                <TextBlock Text="Output:" Width="55" TextAlignment="Center"/>
-                <TextBox Text="{Binding OutputText}" Width="550" Height="25" IsReadOnly="True"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                <TextBlock Text="Compare:" Width="55" TextAlignment="Center"/>
-                <TextBox Text="{Binding CompareText, UpdateSourceTrigger=PropertyChanged}" Width="550" Height="25" IsReadOnly="False"/>
-                <StackPanel Width="25" Margin="15,0,0,0">
-                    <Image Width="25" Height="20"  Source="{Binding CompareMatchesMarkPath}"/>
+            </Border>
+            <Border BorderThickness="1" BorderBrush="Black" Margin="15">
+                <StackPanel Margin="0,0,0,15">
+                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                        <TextBlock Text="Output:" Width="55" TextAlignment="Center"/>
+                        <TextBox Text="{Binding OutputText}" Width="550" Height="25" IsReadOnly="True"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                        <TextBlock Text="Compare:" Width="55" TextAlignment="Center"/>
+                        <TextBox Text="{Binding CompareText, UpdateSourceTrigger=PropertyChanged}" Width="550" Height="25" IsReadOnly="False"/>
+                        <StackPanel Width="25" Margin="15,0,0,0">
+                            <Image Width="25" Height="20"  Source="{Binding CompareMatchesMarkPath}"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </Border>
         </StackPanel>
     </Grid>
 </UserControl>

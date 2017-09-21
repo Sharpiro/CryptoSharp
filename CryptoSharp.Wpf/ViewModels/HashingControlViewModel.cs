@@ -14,8 +14,10 @@ namespace CryptoSharp.Wpf.ViewModels
         private string _inputText;
         private string _outputText;
         private string _compareText;
-        private HasherType _selectedHasherType = HasherType.MD5;
-        private BytesDisplayType _selectedBytesDisplayType = BytesDisplayType.Hex;
+        private string _saltText;
+        private bool _useSalt;
+        private HasherType _selectedHasherType = HasherType.SHA256;
+        private BytesDisplayType _selectedBytesDisplayType = BytesDisplayType.HexSquished;
 
         public string InputText
         {
@@ -32,11 +34,21 @@ namespace CryptoSharp.Wpf.ViewModels
             get => _compareText;
             set { _compareText = value; OnPropertyChanged(); OnPropertyChanged(nameof(CompareMatchesMarkPath)); }
         }
+        public string SaltText
+        {
+            get => _saltText;
+            set { _saltText = value; OnPropertyChanged(); }
+        }
         public bool FileExists => File.Exists(_inputText);
         public CryptoSource CryptoSource
         {
             get => _cryptoSource;
             set { _cryptoSource = value; OnPropertyChanged(); OnPropertyChanged(nameof(IsFileSource)); OnPropertyChanged(nameof(IsTextSource)); }
+        }
+        public bool UseSalt
+        {
+            get => _useSalt;
+            set { _useSalt = value; OnPropertyChanged(); }
         }
         public bool IsFileSource => _cryptoSource == CryptoSource.File;
         public bool IsTextSource => _cryptoSource == CryptoSource.Text;
