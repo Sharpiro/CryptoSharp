@@ -57,7 +57,7 @@ namespace CryptoSharp.Symmetric
 
                 aesAlg.Key = key;
                 aesAlg.IV = iv;
-                var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+                using (var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV))
                 using (var msEncrypt = new MemoryStream())
                 {
                     using (var cryptoStream = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
@@ -82,7 +82,7 @@ namespace CryptoSharp.Symmetric
 
                 aesAlg.Key = key;
                 aesAlg.IV = iv;
-                var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                using (var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV))
                 using (var msDecrypt = new MemoryStream(cipherBytes))
                 using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                 {

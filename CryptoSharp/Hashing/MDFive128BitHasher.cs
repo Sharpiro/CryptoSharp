@@ -2,11 +2,11 @@
 
 namespace CryptoSharp.Hashing
 {
-    public class Sha512BitHasher : I512BitHasher
+    public class MDFive128BitHasher : I128BitHasher, IAtLeast128BitHasher
     {
         public byte[] CreateHash(byte[] plainBytes)
         {
-            using (var hasher = SHA512.Create())
+            using (var hasher = MD5.Create())
             {
                 return hasher.ComputeHash(plainBytes);
             }

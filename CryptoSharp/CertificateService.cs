@@ -20,23 +20,17 @@ namespace CryptoSharp
             const string signatureAlgorithm = "SHA256WithRSA";
 
             //get bouncy castle cert
-            var randomGenerator = new CryptoApiRandomGenerator();
-            var random = new SecureRandom(randomGenerator);
+            var random = new SecureRandom(new CryptoApiRandomGenerator());
             var certificateGenerator = new X509V3CertificateGenerator();
             var serialNumber = BigIntegers.CreateRandomInRange(BigInteger.One, BigInteger.ValueOf(long.MaxValue), random);
             certificateGenerator.SetSerialNumber(serialNumber);
             certificateGenerator.SetSignatureAlgorithm(signatureAlgorithm);
-            var subjectDN = new X509Name($"CN={subject}");
-            var issuerDN = subjectDN;
-            certificateGenerator.SetIssuerDN(issuerDN);
-            certificateGenerator.SetSubjectDN(subjectDN);
-            var notBefore = DateTime.UtcNow.Date;
-            var notAfter = notBefore.AddYears(2);
-            certificateGenerator.SetNotBefore(notBefore);
-            certificateGenerator.SetNotAfter(notAfter);
-            var keyGenerationParameters = new KeyGenerationParameters(random, strength);
+            certificateGenerator.SetIssuerDN(new X509Name($"CN={subject}"));
+            certificateGenerator.SetSubjectDN(new X509Name($"CN={subject}"));
+            certificateGenerator.SetNotBefore(DateTime.UtcNow.Date);
+            certificateGenerator.SetNotAfter(DateTime.UtcNow.Date.AddYears(2));
             var keyPairGenerator = new RsaKeyPairGenerator();
-            keyPairGenerator.Init(keyGenerationParameters);
+            keyPairGenerator.Init(new KeyGenerationParameters(random, strength));
             var subjectKeyPair = keyPairGenerator.GenerateKeyPair();
             certificateGenerator.SetPublicKey(subjectKeyPair.Public);
             var issuerKeyPair = subjectKeyPair;
@@ -48,15 +42,15 @@ namespace CryptoSharp
             var certificateEntry = new X509CertificateEntry(certificate);
             store.SetCertificateEntry(friendlyName, certificateEntry);
             store.SetKeyEntry(friendlyName, new AsymmetricKeyEntry(subjectKeyPair.Private), new[] { certificateEntry });
-            var stream = new MemoryStream();
-            store.Save(stream, password.ToCharArray(), random);
-
-            var convertedCertificate =
-                new X509Certificate2(
-                    stream.ToArray(), password,
-                    X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
-
-            return convertedCertificate;
+            using (var stream = new MemoryStream())
+            {
+                store.Save(stream, password.ToCharArray(), random);
+                var convertedCertificate =
+                    new X509Certificate2(
+                        stream.ToArray(), password,
+                        X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
+                return convertedCertificate;
+            }
         }
     }
 }
