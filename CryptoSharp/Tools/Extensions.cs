@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Security;
 
 namespace CryptoSharp.Tools
 {
@@ -10,6 +13,35 @@ namespace CryptoSharp.Tools
             {
                 stream.CopyTo(ms);
                 return ms.ToArray();
+            }
+        }
+
+        public static byte[] GetInsecureString(this SecureString secureString)
+        {
+            unsafe
+            {
+                var unmanagedBytes = Marshal.SecureStringToGlobalAllocAnsi(secureString);
+                byte[] bytes;
+                try
+                {
+                    var byteArray = (byte*)unmanagedBytes.ToPointer();
+                    var pEnd = byteArray;
+                    while (*pEnd++ != 0) { }
+                    var length = (int)(pEnd - byteArray - 1);
+
+                    bytes = new byte[length];
+                    for (var i = 0; i < length; ++i)
+                    {
+                        // Work with data in byte array as necessary, via pointers, here
+                        var dataAtIndex = *(byteArray + i);
+                        bytes[i] = dataAtIndex;
+                    }
+                }
+                finally
+                {
+                    Marshal.ZeroFreeGlobalAllocAnsi(unmanagedBytes);
+                }
+                return bytes;
             }
         }
     }
