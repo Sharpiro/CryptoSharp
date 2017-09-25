@@ -107,6 +107,16 @@ namespace CryptoSharp.Asymmetric
             return new RsaService(privateKey, publicKey, rsa.KeySize);
         }
 
+        public static RsaService Create(X509Certificate2 cert)
+        {
+            if (!cert.HasPrivateKey) throw new InvalidOperationException("cert must have private key as well as public key");
+
+            var rsa = (RSACryptoServiceProvider)cert.PrivateKey;
+            var privateKey = rsa.ToXmlString(true);
+            var publicKey = rsa.ToXmlString(false);
+            return new RsaService(privateKey, publicKey, rsa.KeySize);
+        }
+
         private static BigInteger GetBig(byte[] data)
         {
             var inArr = (byte[])data.Clone();
