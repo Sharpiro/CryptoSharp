@@ -75,12 +75,12 @@ namespace CryptoSharp.Tests46
             const string password = "password";
             const int strength = 1024;
 
-            using (var convertedCertificate = new CertificateService().CreateCert(subject, password, strength))
+            using (var certificate = new CertificateService().CreateCert(subject, password, strength))
             {
-                var publicKeyProvider = (RSACryptoServiceProvider)convertedCertificate.PublicKey.Key;
-                var privateKeyProvider = (RSACryptoServiceProvider)convertedCertificate.PrivateKey;
+                var publicKeyProvider = (RSACryptoServiceProvider)certificate.PublicKey.Key;
+                var privateKeyProvider = (RSACryptoServiceProvider)certificate.PrivateKey;
 
-                var rsaService = RsaService.Create(convertedCertificate);
+                var rsaService = RsaService.Create(certificate);
 
                 Assert.AreEqual(publicKeyProvider.ToXmlString(false), privateKeyProvider.ToXmlString(false));
                 Assert.AreEqual(rsaService.PrivateKey, privateKeyProvider.ToXmlString(true));
