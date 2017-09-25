@@ -1,5 +1,4 @@
-﻿#if NET46
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Asn1.X509;
@@ -61,4 +60,3 @@ namespace CryptoSharp
         }
     }
 }
-#endif
