@@ -3,6 +3,7 @@ using CryptoSharp.Asymmetric;
 using CryptoSharp.Symmetric;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
+using CryptoSharp.Hashing;
 
 namespace CryptoSharp.Tests46
 {
@@ -37,6 +38,32 @@ namespace CryptoSharp.Tests46
             var messageToClientText = Encoding.UTF8.GetString(messageToClientBytes);
             Assert.IsTrue(responseToClientBytes.SequenceEqual(messageToClientBytes));
             Assert.AreEqual(responseToClientMessage, messageToClientText);
+        }
+
+        [TestMethod]
+        public void DigitalSignatureTest()
+        {
+            var aesService = new AesService();
+            (byte[] aesKey, byte[] aesIv) = aesService.CreateKey();
+
+            const string messageData = "this is a test message";
+
+            var messageBytes = Encoding.UTF8.GetBytes(messageData);
+            var sender = RsaService.Create();
+            var receiver = RsaService.Create();
+            var hasher = new Sha256BitHasher();
+
+
+            var hashedMessageBytes = hasher.CreateHash(messageBytes);
+
+            var digitalSignature = sender.EncryptPrivate(hashedMessageBytes);
+            var cryptoBytes = aesService.Encrypt(messageBytes, aesKey, aesIv);
+
+            var hashMessageBytesFromSignature = receiver.DecryptPublic(digitalSignature, sender.PublicKey);
+            var plainMessageBytes = aesService.Decrypt(cryptoBytes, aesKey, aesIv);
+            var hashedPlainMessageBytes = hasher.CreateHash(plainMessageBytes);
+
+            Assert.IsTrue(hashMessageBytesFromSignature.SequenceEqual(hashedPlainMessageBytes));
         }
     }
 }
