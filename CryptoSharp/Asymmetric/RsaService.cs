@@ -2,6 +2,7 @@
 using System;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace CryptoSharp.Asymmetric
 {
@@ -92,11 +93,21 @@ namespace CryptoSharp.Asymmetric
             return new RsaService(privateKey, publicKey, keySize);
         }
 
+        public static RsaService Create(X509Certificate2 cert)
+        {
+            if (!cert.HasPrivateKey) throw new InvalidOperationException("cert must have private key as well as public key");
+
+            var rsa = (RSACryptoServiceProvider)cert.PrivateKey;
+            var privateKey = rsa.ToXmlString(true);
+            var publicKey = rsa.ToXmlString(false);
+            return new RsaService(privateKey, publicKey, rsa.KeySize);
+        }
+
         private static BigInteger GetBig(byte[] data)
         {
-            byte[] inArr = (byte[])data.Clone();
+            var inArr = (byte[])data.Clone();
             Array.Reverse(inArr);  // Reverse the byte order
-            byte[] final = new byte[inArr.Length + 1];  // Add an empty byte at the end, to simulate unsigned BigInteger (no negatives!)
+            var final = new byte[inArr.Length + 1];  // Add an empty byte at the end, to simulate unsigned BigInteger (no negatives!)
             Array.Copy(inArr, final, inArr.Length);
 
             return new BigInteger(final);
@@ -105,12 +116,12 @@ namespace CryptoSharp.Asymmetric
         // Add 4 byte random padding, first bit *Always On*
         private static byte[] AddPadding(byte[] data)
         {
-            Random rnd = new Random();
-            byte[] paddings = new byte[4];
+            var rnd = new Random();
+            var paddings = new byte[4];
             rnd.NextBytes(paddings);
             paddings[0] = (byte)(paddings[0] | 128);
 
-            byte[] results = new byte[data.Length + 4];
+            var results = new byte[data.Length + 4];
 
             Array.Copy(paddings, results, 4);
             Array.Copy(data, 0, results, 4, data.Length);
@@ -119,7 +130,7 @@ namespace CryptoSharp.Asymmetric
 
         private static byte[] RemovePadding(byte[] data)
         {
-            byte[] results = new byte[data.Length - 4];
+            var results = new byte[data.Length - 4];
             Array.Copy(data, results, results.Length);
             return results;
         }
