@@ -16,12 +16,12 @@ namespace CryptoSharp.Tools
             }
         }
 
-        public static byte[] GetInsecureString(this SecureString secureString)
+        public static char[] GetInsecureString(this SecureString secureString)
         {
             unsafe
             {
                 var unmanagedBytes = Marshal.SecureStringToGlobalAllocAnsi(secureString);
-                byte[] bytes;
+                char[] chars;
                 try
                 {
                     var byteArray = (byte*)unmanagedBytes.ToPointer();
@@ -29,19 +29,19 @@ namespace CryptoSharp.Tools
                     while (*pEnd++ != 0) { }
                     var length = (int)(pEnd - byteArray - 1);
 
-                    bytes = new byte[length];
+                    chars = new char[length];
                     for (var i = 0; i < length; ++i)
                     {
                         // Work with data in byte array as necessary, via pointers, here
                         var dataAtIndex = *(byteArray + i);
-                        bytes[i] = dataAtIndex;
+                        chars[i] = (char)dataAtIndex;
                     }
                 }
                 finally
                 {
                     Marshal.ZeroFreeGlobalAllocAnsi(unmanagedBytes);
                 }
-                return bytes;
+                return chars;
             }
         }
     }
