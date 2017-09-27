@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -16,7 +15,7 @@ namespace CryptoSharp.Tools
             }
         }
 
-        public static char[] GetInsecureString(this SecureString secureString)
+        public static char[] GetInsecureChars(this SecureString secureString)
         {
             unsafe
             {

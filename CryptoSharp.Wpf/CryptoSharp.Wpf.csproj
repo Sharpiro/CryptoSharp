@@ -76,7 +76,7 @@
     <Compile Include="ViewModels\HashingControlViewModel.cs" />
     <Compile Include="ViewModels\EncryptionControlViewModel.cs" />
     <Compile Include="ViewModels\PageOwnerViewModel.cs" />
-    <Compile Include="Windows\InputControl.xaml.cs">
+    <Compile Include="Controls\InputControl.xaml.cs">
       <DependentUpon>InputControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\PageOwner.xaml.cs">
@@ -119,7 +119,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\InputControl.xaml">
+    <Page Include="Controls\InputControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
