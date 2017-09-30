@@ -4,6 +4,12 @@ namespace CryptoSharp.Hashing
 {
     public class Sha256BitHasher : I256BitHasher
     {
-        public byte[] CreateHash(byte[] plainBytes) => SHA256.Create().ComputeHash(plainBytes);
+        public byte[] CreateHash(byte[] plainBytes)
+        {
+            using (var hasher = SHA256.Create())
+            {
+                return hasher.ComputeHash(plainBytes);
+            }
+        }
     }
 }

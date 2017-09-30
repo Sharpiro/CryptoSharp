@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media;
 
-namespace CryptoSharp.Wpf.Windows
+namespace CryptoSharp.Wpf.Controls
 {
     public partial class InputControl
     {

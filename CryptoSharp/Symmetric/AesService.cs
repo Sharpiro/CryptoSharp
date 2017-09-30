@@ -5,6 +5,7 @@ using System.Text;
 using CryptoSharp.Hashing;
 using CryptoSharp.Tools;
 using System.Linq;
+using System.Security;
 
 namespace CryptoSharp.Symmetric
 {
@@ -57,7 +58,7 @@ namespace CryptoSharp.Symmetric
 
                 aesAlg.Key = key;
                 aesAlg.IV = iv;
-                var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+                using (var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV))
                 using (var msEncrypt = new MemoryStream())
                 {
                     using (var cryptoStream = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
@@ -82,13 +83,31 @@ namespace CryptoSharp.Symmetric
 
                 aesAlg.Key = key;
                 aesAlg.IV = iv;
-                var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                using (var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV))
                 using (var msDecrypt = new MemoryStream(cipherBytes))
                 using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                 {
                     return csDecrypt.GetBytes();
                 }
             }
+        }
+
+        public SecureString DecryptToSecureString(byte[] cipherBytes, byte[] key, byte[] iv)
+        {
+            var decryptedBytes = Decrypt(cipherBytes, key, iv);
+            var secureString = new SecureString();
+            foreach (var b in decryptedBytes)
+            {
+                var c = (char)b;
+                if ('\0' == c)
+                {
+                    continue;
+                }
+                secureString.AppendChar(c);
+            }
+            Array.Clear(decryptedBytes, 0, decryptedBytes.Length);
+            secureString.MakeReadOnly();
+            return secureString;
         }
     }
 }

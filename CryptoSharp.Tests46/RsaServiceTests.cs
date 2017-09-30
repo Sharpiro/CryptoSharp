@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Cryptography;
 using CryptoSharp.Asymmetric;
 using CryptoSharp.Symmetric;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -64,6 +65,27 @@ namespace CryptoSharp.Tests46
             var hashedPlainMessageBytes = hasher.CreateHash(plainMessageBytes);
 
             Assert.IsTrue(hashMessageBytesFromSignature.SequenceEqual(hashedPlainMessageBytes));
+        }
+
+        [TestMethod]
+        //http://blog.differentpla.net/blog/2013/03/18/using-bouncy-castle-from-net
+        public void CreateCertTest()
+        {
+            const string subject = "test";
+            const string password = "password";
+            const int strength = 1024;
+
+            using (var certificate = new CertificateService().CreateCert(subject, password, strength))
+            {
+                var publicKeyProvider = (RSACryptoServiceProvider)certificate.PublicKey.Key;
+                var privateKeyProvider = (RSACryptoServiceProvider)certificate.PrivateKey;
+
+                var rsaService = RsaService.Create(certificate);
+
+                Assert.AreEqual(publicKeyProvider.ToXmlString(false), privateKeyProvider.ToXmlString(false));
+                Assert.AreEqual(rsaService.PrivateKey, privateKeyProvider.ToXmlString(true));
+                Assert.AreEqual(rsaService.PublicKey, privateKeyProvider.ToXmlString(false));
+            }
         }
     }
 }

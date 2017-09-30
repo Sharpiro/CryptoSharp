@@ -1,13 +1,13 @@
-﻿#if NET46
-using System;
+﻿using System;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace CryptoSharp.Asymmetric
 {
     public class RsaService
     {
-        private readonly int _keySize = 1024;
+        private readonly int _keySize;
         public string PrivateKey { get; }
         public string PublicKey { get; }
 
@@ -22,81 +22,96 @@ namespace CryptoSharp.Asymmetric
 
         public byte[] EncryptPrivate(byte[] plainBytes)
         {
-            var rsaProvider = new RSACryptoServiceProvider(_keySize);
-            rsaProvider.FromXmlString(PrivateKey);
+            using (var rsaProvider = new RSACryptoServiceProvider(_keySize))
+            {
+                rsaProvider.FromXmlString(PrivateKey);
 
+                var rsaParams = rsaProvider.ExportParameters(true);
+                var d = GetBig(rsaParams.D);
+                var modulus = GetBig(rsaParams.Modulus);
+                var numData = GetBig(AddPadding(plainBytes));
+                var encData = BigInteger.ModPow(numData, d, modulus);
 
-            RSAParameters rsaParams = rsaProvider.ExportParameters(true);
-            BigInteger D = GetBig(rsaParams.D);
-            BigInteger Modulus = GetBig(rsaParams.Modulus);
-            BigInteger numData = GetBig(AddPadding(plainBytes));
-            BigInteger encData = BigInteger.ModPow(numData, D, Modulus);
-
-            return encData.ToByteArray();
+                return encData.ToByteArray();
+            }
         }
 
         public byte[] DecryptPublic(byte[] cryptoBytes, string senderPublickey)
         {
-            var rsaProvider = new RSACryptoServiceProvider(_keySize);
-            rsaProvider.FromXmlString(senderPublickey);
+            using (var rsaProvider = new RSACryptoServiceProvider(_keySize))
+            {
+                rsaProvider.FromXmlString(senderPublickey);
 
-            BigInteger numEncData = new BigInteger(cryptoBytes);
+                var numEncData = new BigInteger(cryptoBytes);
 
-            RSAParameters rsaParams = rsaProvider.ExportParameters(false);
-            BigInteger Exponent = GetBig(rsaParams.Exponent);
-            BigInteger Modulus = GetBig(rsaParams.Modulus);
+                var rsaParams = rsaProvider.ExportParameters(false);
+                var exponent = GetBig(rsaParams.Exponent);
+                var modulus = GetBig(rsaParams.Modulus);
 
-            BigInteger decData = BigInteger.ModPow(numEncData, Exponent, Modulus);
+                var decData = BigInteger.ModPow(numEncData, exponent, modulus);
 
-            byte[] data = decData.ToByteArray();
-            byte[] result = new byte[data.Length - 1];
-            Array.Copy(data, result, result.Length);
-            result = RemovePadding(result);
+                var data = decData.ToByteArray();
+                var result = new byte[data.Length - 1];
+                Array.Copy(data, result, result.Length);
+                result = RemovePadding(result);
 
-            Array.Reverse(result);
-            return result;
+                Array.Reverse(result);
+                return result;
+            }
         }
 
         public byte[] Encrypt(byte[] plainBytes, string receiverPublicKey)
         {
-            var rsaProvider = new RSACryptoServiceProvider(_keySize);
-            rsaProvider.FromXmlString(receiverPublicKey);
-
-            var cryptoBytes = rsaProvider.Encrypt(plainBytes, true);
-
-            return cryptoBytes;
+            using (var rsaProvider = new RSACryptoServiceProvider(_keySize))
+            {
+                rsaProvider.FromXmlString(receiverPublicKey);
+                var cryptoBytes = rsaProvider.Encrypt(plainBytes, true);
+                return cryptoBytes;
+            }
         }
 
         public byte[] Decrypt(byte[] cryptoBytes)
         {
-            var rsaProvider = new RSACryptoServiceProvider(_keySize);
-            rsaProvider.FromXmlString(PrivateKey);
-
-            var plainBytes = rsaProvider.Decrypt(cryptoBytes, true);
-
-            return plainBytes;
+            using (var rsaProvider = new RSACryptoServiceProvider(_keySize))
+            {
+                rsaProvider.FromXmlString(PrivateKey);
+                var plainBytes = rsaProvider.Decrypt(cryptoBytes, true);
+                return plainBytes;
+            }
         }
 
         public static RsaService Create(int keySize = 1024, string privateKey = null)
         {
-            var csp = new RSACryptoServiceProvider(keySize);
-            if (string.IsNullOrEmpty(privateKey))
+            using (var csp = new RSACryptoServiceProvider(keySize))
             {
-                privateKey = csp.ToXmlString(true);
+                if (string.IsNullOrEmpty(privateKey))
+                {
+                    privateKey = csp.ToXmlString(true);
+                }
+                else
+                {
+                    csp.FromXmlString(privateKey);
+                }
+                var publicKey = csp.ToXmlString(false);
+                return new RsaService(privateKey, publicKey, keySize);
             }
-            else
-            {
-                csp.FromXmlString(privateKey);
-            }
-            var publicKey = csp.ToXmlString(false);
-            return new RsaService(privateKey, publicKey, keySize);
+        }
+
+        public static RsaService Create(X509Certificate2 cert)
+        {
+            if (!cert.HasPrivateKey) throw new InvalidOperationException("cert must have private key as well as public key");
+
+            var rsa = (RSACryptoServiceProvider)cert.PrivateKey;
+            var privateKey = rsa.ToXmlString(true);
+            var publicKey = rsa.ToXmlString(false);
+            return new RsaService(privateKey, publicKey, rsa.KeySize);
         }
 
         private static BigInteger GetBig(byte[] data)
         {
-            byte[] inArr = (byte[])data.Clone();
+            var inArr = (byte[])data.Clone();
             Array.Reverse(inArr);  // Reverse the byte order
-            byte[] final = new byte[inArr.Length + 1];  // Add an empty byte at the end, to simulate unsigned BigInteger (no negatives!)
+            var final = new byte[inArr.Length + 1];  // Add an empty byte at the end, to simulate unsigned BigInteger (no negatives!)
             Array.Copy(inArr, final, inArr.Length);
 
             return new BigInteger(final);
@@ -105,12 +120,12 @@ namespace CryptoSharp.Asymmetric
         // Add 4 byte random padding, first bit *Always On*
         private static byte[] AddPadding(byte[] data)
         {
-            Random rnd = new Random();
-            byte[] paddings = new byte[4];
+            var rnd = new Random();
+            var paddings = new byte[4];
             rnd.NextBytes(paddings);
             paddings[0] = (byte)(paddings[0] | 128);
 
-            byte[] results = new byte[data.Length + 4];
+            var results = new byte[data.Length + 4];
 
             Array.Copy(paddings, results, 4);
             Array.Copy(data, 0, results, 4, data.Length);
@@ -119,10 +134,9 @@ namespace CryptoSharp.Asymmetric
 
         private static byte[] RemovePadding(byte[] data)
         {
-            byte[] results = new byte[data.Length - 4];
+            var results = new byte[data.Length - 4];
             Array.Copy(data, results, results.Length);
             return results;
         }
     }
 }
-#endif
