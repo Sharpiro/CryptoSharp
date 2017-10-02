@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using JetBrains.Annotations;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Cryptography;
 
 namespace CryptoSharp.Tools
 {
@@ -42,6 +45,15 @@ namespace CryptoSharp.Tools
                 }
                 return chars;
             }
+        }
+
+        public static byte[] GetBytes([NotNull]this RandomNumberGenerator randomizer, int length)
+        {
+            if (randomizer == null) throw new ArgumentNullException(nameof(randomizer));
+            if (length < 1) throw new ArgumentOutOfRangeException(nameof(length), "length must be larger than 0");
+            var buffer = new byte[length];
+            randomizer.GetBytes(buffer);
+            return buffer;
         }
     }
 }

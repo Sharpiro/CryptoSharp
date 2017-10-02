@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using CryptoSharp.Asymmetric;
 using CryptoSharp.Symmetric;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -75,13 +76,22 @@ namespace CryptoSharp.Tests46
             const string password = "password";
             const int strength = 1024;
 
-            using (var certificate = new CertificateService().CreateCert(subject, password, strength))
+            var certService = new CertificateService { RandomPasswordSize = 4 };
+
+            using (var certificate = certService.CreateCert(subject))
             {
                 var publicKeyProvider = (RSACryptoServiceProvider)certificate.PublicKey.Key;
                 var privateKeyProvider = (RSACryptoServiceProvider)certificate.PrivateKey;
 
                 var rsaService = RsaService.Create(certificate);
+                var exportedCertBytes = certificate.Export(X509ContentType.Pfx);
+                var exportedCertBytes2 = certificate.Export(X509ContentType.Cert);
 
+                var exportedCertBytesReparsed = new X509Certificate2(exportedCertBytes);
+                var exportedCertBytes2Reparsed = new X509Certificate2(exportedCertBytes2);
+
+                Assert.IsNotNull(exportedCertBytesReparsed);
+                Assert.IsNotNull(exportedCertBytes2Reparsed);
                 Assert.AreEqual(publicKeyProvider.ToXmlString(false), privateKeyProvider.ToXmlString(false));
                 Assert.AreEqual(rsaService.PrivateKey, privateKeyProvider.ToXmlString(true));
                 Assert.AreEqual(rsaService.PublicKey, privateKeyProvider.ToXmlString(false));
