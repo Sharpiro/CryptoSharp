@@ -8,9 +8,10 @@
              xmlns:wpfModels="clr-namespace:CryptoSharp.Wpf.Models"
              xmlns:models="clr-namespace:CryptoSharp.Models;assembly=CryptoSharp"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="675" Background="White">
+             d:DesignHeight="430" d:DesignWidth="675" Background="White">
     <UserControl.Resources>
         <tools:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+        <tools:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
@@ -35,28 +36,57 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <RadioButton Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:CryptoSource.File}}"/>
-                    <RadioButton Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:CryptoSource.Text}}" Margin="15,0,0,0"/>
+                    <RadioButton Content="File" IsChecked="{Binding InputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:TextFormat.File}}"/>
+                    <RadioButton Content="Text" IsChecked="{Binding InputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:TextFormat.PlainText}}" Margin="15,0,0,0"/>
+                    <RadioButton Content="Hex" IsChecked="{Binding InputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:TextFormat.Hex}}" Margin="15,0,0,0"/>
+                    <RadioButton Content="Base64" IsChecked="{Binding InputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:TextFormat.Base64}}" Margin="15,0,0,0"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="300,0,0,0">
-                    <RadioButton Content="Hex" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesStringDisplay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Hex}}"/>
-                    <RadioButton Content="Base64" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesStringDisplay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Base64}}" Margin="15,0,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="170,0,0,0">
+                    <RadioButton Content="Text" IsChecked="{Binding OutputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:TextFormat.PlainText}}"/>
+                    <RadioButton Content="Hex" IsChecked="{Binding OutputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:TextFormat.Hex}}" Margin="15,0,0,0"/>
+                    <RadioButton Content="Base64" IsChecked="{Binding OutputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:TextFormat.Base64}}" Margin="15,0,0,0"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Margin="0,5,0,0" Orientation="Horizontal" IsEnabled="{Binding IsTextSource}">
+        </StackPanel>
+        <Grid Margin="15,125,15,30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox Margin="0,0,15,0" Grid.Row="0" Text="{Binding InputText}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+            <TextBox Margin="15,0,0,0" Grid.Row="0" Text="{Binding OutputText}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Grid.Column="1"/>
+            <StackPanel Grid.Column="0" Grid.Row="1"  Margin="0,15,0,0">
+                <StackPanel Margin="0,0,0,0" Orientation="Horizontal">
+                    <Button Name="EncrytpButton" Content="Encrypt" Width="75" Margin="0,0,0,0" Click="EncryptButton_OnClick"/>
+                    <Button Name="DecryptButton" Content="Decrypt" Width="75" Margin="15,0,0,0" Click="DecryptButton_OnClick"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+
+        <!--<StackPanel Grid.Column="0" Margin="0,0,15,0">
+                -->
+        <!--<TextBlock Text="Input:" Width="50"/>-->
+        <!--
+            </StackPanel>-->
+        <!--<StackPanel Grid.Column="1" Margin="15,0,0,0">
+                        <TextBlock Text="Output:" Width="50"/>
+                        <TextBox Text="{Binding OutputText}" MinWidth="250" MinHeight="225" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                    </StackPanel>-->
+        <!--<StackPanel Margin="0,5,0,0" Orientation="Horizontal" IsEnabled="{Binding IsFileSource, Converter={StaticResource InverseBooleanConverter}}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Input:" Width="50"/>
-                    <TextBox Text="{Binding InputText}" Width="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    <TextBox Text="{Binding InputText}" MinWidth="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
                     <TextBlock Text="Output:" Width="50"/>
-                    <TextBox Text="{Binding OutputText}" Width="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    <TextBox Text="{Binding OutputText}" MinWidth="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
-                <Button Name="EncrytpButton" Content="Encrypt" Width="75" Margin="0,0,0,0" Click="EncryptButton_OnClick"/>
-                <Button Name="DecryptButton" Content="Decrypt" Width="75" Margin="15,0,0,0" Click="DecryptButton_OnClick"/>
-            </StackPanel>
-        </StackPanel>
+            </StackPanel>-->
+
     </Grid>
 </UserControl>

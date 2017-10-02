@@ -12,6 +12,7 @@ using CryptoSharp.Wpf.ViewModels;
 using CryptoSharp.Wpf.Windows;
 using Microsoft.Win32;
 using CryptoSharp.Models;
+using CryptoSharp.Tools;
 
 namespace CryptoSharp.Wpf.Controls
 {
@@ -50,7 +51,7 @@ namespace CryptoSharp.Wpf.Controls
                 _viewModel.OutputText = null;
                 await Task.Run(() =>
                 {
-                    if (_viewModel.CryptoSource == CryptoSource.File)
+                    if (_viewModel.InputFormat == TextFormat.File)
                         EncryptFile();
                     else
                         EncryptText();
@@ -74,8 +75,10 @@ namespace CryptoSharp.Wpf.Controls
                 _viewModel.OutputText = null;
                 await Task.Run(() =>
                 {
-                    if (_viewModel.CryptoSource == CryptoSource.File)
+                    if (_viewModel.InputFormat == TextFormat.File)
                         DecryptFile();
+                    else if (_viewModel.InputFormat == TextFormat.PlainText)
+                        throw new InvalidOperationException("Plain text is invalid for decryption");
                     else
                         DecryptText();
                 });
@@ -158,9 +161,23 @@ namespace CryptoSharp.Wpf.Controls
         private void EncryptText()
         {
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
-            var bytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
+            if (_viewModel.OutputFormat == TextFormat.PlainText) _viewModel.OutputFormat = TextFormat.Hex;
+            byte[] bytes;
+            switch (_viewModel.InputFormat)
+            {
+                case TextFormat.PlainText:
+                    bytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
+                    break;
+                case TextFormat.Hex:
+                    bytes = _viewModel.InputText.GetBytesFromHex();
+                    break;
+                case TextFormat.Base64:
+                    bytes = Convert.FromBase64String(_viewModel.InputText);
+                    break;
+                default: throw new ArgumentOutOfRangeException();
+            }
             var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
-            _viewModel.OutputText = _viewModel.BytesStringDisplay == BytesDisplayType.Base64 ?
+            _viewModel.OutputText = _viewModel.OutputFormat == TextFormat.Base64 ?
                 Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X2")).StringJoin(" ");
         }
 
@@ -180,25 +197,39 @@ namespace CryptoSharp.Wpf.Controls
         {
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
 
-            var cryptoBytes = _viewModel.BytesStringDisplay == BytesDisplayType.Base64 ?
+            var cryptoBytes = _viewModel.InputFormat == TextFormat.Base64 ?
                 Convert.FromBase64String(_viewModel.InputText) : _viewModel.InputText.Split(new[] { " " }, StringSplitOptions.None).Select(hexString => Convert.ToByte(hexString, 16)).ToArray();
             var plainBytes = _aesService.Decrypt(cryptoBytes, _viewModel.Key, _viewModel.IV);
-            var plainText = Encoding.UTF8.GetString(plainBytes);
-            _viewModel.OutputText = plainText;
+
+            string output;
+            switch (_viewModel.OutputFormat)
+            {
+                case TextFormat.PlainText:
+                    output = Encoding.UTF8.GetString(plainBytes);
+                    break;
+                case TextFormat.Hex:
+                    output = plainBytes.Select(b => b.ToString("X2")).StringJoin(" ");
+                    break;
+                case TextFormat.Base64:
+                    output = Convert.ToBase64String(plainBytes);
+                    break;
+                default: throw new ArgumentOutOfRangeException();
+            }
+            _viewModel.OutputText = output;
         }
 
-        private void BytesDisplayType_Checked(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(_viewModel.OutputText)) return;
+        //private void BytesDisplayType_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(_viewModel.OutputText)) return;
 
-                EncryptText();
-            }
-            catch (Exception ex)
-            {
-                _messageBox.ShowError(ex);
-            }
-        }
+        //        EncryptText();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _messageBox.ShowError(ex);
+        //    }
+        //}
     }
 }

@@ -1,5 +1,4 @@
-﻿using CryptoSharp.Models;
-using CryptoSharp.Wpf.Models;
+﻿using CryptoSharp.Wpf.Models;
 using System;
 using System.IO;
 
@@ -10,10 +9,10 @@ namespace CryptoSharp.Wpf.ViewModels
         private string _filePath;
         private string _keyString;
         private string _ivString;
-        private CryptoSource _cryptoSource = CryptoSource.Text;
         private string _inputText;
         private string _outputText;
-        private BytesDisplayType _bytesStringDisplay = BytesDisplayType.Base64;
+        private TextFormat _inputFormat= TextFormat.PlainText;
+        private TextFormat _outputFormat = TextFormat.Base64;
 
         public string FilePath
         {
@@ -34,13 +33,18 @@ namespace CryptoSharp.Wpf.ViewModels
         public byte[] Key => string.IsNullOrEmpty(_keyString) ? null : Convert.FromBase64String(_keyString);
         public byte[] IV => string.IsNullOrEmpty(_ivString) ? null : Convert.FromBase64String(_ivString);
         public bool FileExists => File.Exists(_filePath);
-        public CryptoSource CryptoSource
+        public TextFormat InputFormat
         {
-            get => _cryptoSource;
-            set { _cryptoSource = value; OnPropertyChanged(); OnPropertyChanged(nameof(IsFileSource)); OnPropertyChanged(nameof(IsTextSource)); }
+            get => _inputFormat;
+            set { _inputFormat = value; OnPropertyChanged(); OnPropertyChanged(nameof(IsFileSource)); OnPropertyChanged(nameof(IsTextSource)); }
         }
-        public bool IsFileSource => _cryptoSource == CryptoSource.File;
-        public bool IsTextSource => _cryptoSource == CryptoSource.Text;
+        public TextFormat OutputFormat
+        {
+            get => _outputFormat;
+            set { _outputFormat = value; OnPropertyChanged(); }
+        }
+        public bool IsFileSource => _inputFormat == TextFormat.File;
+        public bool IsTextSource => _inputFormat == TextFormat.PlainText;
         public string InputText
         {
             get => _inputText;
@@ -52,10 +56,6 @@ namespace CryptoSharp.Wpf.ViewModels
             set { _outputText = value; OnPropertyChanged(); }
         }
         public string MarkPath => FileExists ? "/content/checkmark.png" : "/content/exmark.png";
-        public BytesDisplayType BytesStringDisplay
-        {
-            get => _bytesStringDisplay;
-            set { _bytesStringDisplay = value; OnPropertyChanged(); }
-        }
+
     }
 }

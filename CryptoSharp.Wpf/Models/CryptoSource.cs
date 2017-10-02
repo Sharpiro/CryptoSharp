@@ -3,6 +3,16 @@
     public enum CryptoSource
     {
         File,
-        Text
+        Text,
+        Hex
+    }
+
+    public enum TextFormat
+    {
+        File,
+        PlainText,
+        Hex,
+        //HexSquished,
+        Base64
     }
 }

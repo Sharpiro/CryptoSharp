@@ -1,9 +1,11 @@
 ﻿using System;
 using JetBrains.Annotations;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace CryptoSharp.Tools
 {
@@ -16,6 +18,18 @@ namespace CryptoSharp.Tools
                 stream.CopyTo(ms);
                 return ms.ToArray();
             }
+        }
+
+        public static byte[] GetBytesFromHex(this string hexString)
+        {
+            hexString = hexString.Replace(" ", string.Empty);
+            if (hexString.Length % 2 != 0) throw new InvalidOperationException("Hex string must be an even amount of characters in X2 format: 'FF'");
+            var match = Regex.Match(hexString, "[^a-fA-F\\d\\s:]");
+            if (match.Success) throw new InvalidOperationException("Hex string contains invalid characters");
+            return Enumerable.Range(0, hexString.Length)
+                .Where(x => x % 2 == 0)
+                .Select(x => Convert.ToByte(hexString.Substring(x, 2), 16))
+                .ToArray();
         }
 
         public static char[] GetInsecureChars(this SecureString secureString)

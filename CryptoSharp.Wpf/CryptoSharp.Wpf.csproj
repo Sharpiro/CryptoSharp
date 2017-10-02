@@ -72,6 +72,7 @@
     <Compile Include="MessageBoxFacade.cs" />
     <Compile Include="Models\CryptoSource.cs" />
     <Compile Include="Tools\EnumBooleanConverter.cs" />
+    <Compile Include="Tools\InverseBooleanConverter.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\HashingControlViewModel.cs" />
     <Compile Include="ViewModels\EncryptionControlViewModel.cs" />

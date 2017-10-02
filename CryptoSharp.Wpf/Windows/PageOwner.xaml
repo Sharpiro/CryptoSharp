@@ -4,13 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="500" Width="775" WindowStartupLocation="CenterScreen" Icon="/content/cryptolock.png">
+        Title="{Binding Title}" Height="525" Width="775" WindowStartupLocation="CenterScreen" Icon="/content/cryptolock.png">
     <Grid>
-        <StackPanel Margin="15">
-            <TabControl Name="PageTabControl" Height="430">
+        <TabControl Name="PageTabControl"  Margin="15">
                 <TabItem Name="EncryptionTab" Header="Encryption"/>
                 <TabItem Name="HashingTab" Header="Hashing"/>
             </TabControl>
-        </StackPanel>
     </Grid>
 </Window>

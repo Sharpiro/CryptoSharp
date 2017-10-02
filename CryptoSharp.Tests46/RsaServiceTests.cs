@@ -73,8 +73,10 @@ namespace CryptoSharp.Tests46
         public void CreateCertTest()
         {
             const string subject = "test";
-            const string password = "password";
-            const int strength = 1024;
+            // ReSharper disable once UnusedVariable
+            //const string password = "password";
+            //// ReSharper disable once UnusedVariable
+            //const int strength = 1024;
 
             var certService = new CertificateService { RandomPasswordSize = 4 };
 
