@@ -1,6 +1,6 @@
-﻿using CryptoSharp.Wpf.Models;
-using System;
+﻿using System;
 using System.IO;
+using CryptoSharp.Models;
 
 namespace CryptoSharp.Wpf.ViewModels
 {
@@ -12,7 +12,7 @@ namespace CryptoSharp.Wpf.ViewModels
         private string _inputText;
         private string _outputText;
         private TextFormat _inputFormat= TextFormat.PlainText;
-        private TextFormat _outputFormat = TextFormat.Base64;
+        private TextFormat _outputFormat = TextFormat.Auto;
 
         public string FilePath
         {

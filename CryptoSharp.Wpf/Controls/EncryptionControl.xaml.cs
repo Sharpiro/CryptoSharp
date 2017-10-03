@@ -1,18 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using CryptoSharp.Hashing;
 using CryptoSharp.Symmetric;
-using CryptoSharp.Wpf.Models;
 using CryptoSharp.Wpf.ViewModels;
-using CryptoSharp.Wpf.Windows;
 using Microsoft.Win32;
 using CryptoSharp.Models;
-using CryptoSharp.Tools;
+using CryptoSharp.Services;
 
 namespace CryptoSharp.Wpf.Controls
 {
@@ -21,6 +19,7 @@ namespace CryptoSharp.Wpf.Controls
         private readonly EncryptionControlViewModel _viewModel;
         private readonly MessageBoxFacade _messageBox = new MessageBoxFacade();
         private readonly AesService _aesService = new AesService(new Sha256BitHasher(), new MDFive128BitHasher());
+        private readonly TextFormatService _textFormatService = new TextFormatService();
 
         public EncryptionControl(EncryptionControlViewModel viewModel)
         {
@@ -153,7 +152,7 @@ namespace CryptoSharp.Wpf.Controls
             if (!fileInfo.Exists) throw new FileNotFoundException($"No file found @ '{_viewModel.FilePath}'");
             var bytes = File.ReadAllBytes(_viewModel.FilePath);
             var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
-            var parentDir = Directory.GetParent(_viewModel.FilePath);
+            //var parentDir = Directory.GetParent(_viewModel.FilePath);
             File.WriteAllBytes($"{fileInfo.FullName}.crypto", cryptoBytes);
             _messageBox.ShowInfo("Successfully encrypted file");
         }
@@ -161,24 +160,17 @@ namespace CryptoSharp.Wpf.Controls
         private void EncryptText()
         {
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
-            if (_viewModel.OutputFormat == TextFormat.PlainText) _viewModel.OutputFormat = TextFormat.Hex;
-            byte[] bytes;
-            switch (_viewModel.InputFormat)
+
+            var outputFormat = _viewModel.OutputFormat;
+            if (_viewModel.OutputFormat == TextFormat.PlainText)
             {
-                case TextFormat.PlainText:
-                    bytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
-                    break;
-                case TextFormat.Hex:
-                    bytes = _viewModel.InputText.GetBytesFromHex();
-                    break;
-                case TextFormat.Base64:
-                    bytes = Convert.FromBase64String(_viewModel.InputText);
-                    break;
-                default: throw new ArgumentOutOfRangeException();
+                _viewModel.OutputFormat = TextFormat.Auto;
+                outputFormat = TextFormat.Base64;
             }
-            var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
-            _viewModel.OutputText = _viewModel.OutputFormat == TextFormat.Base64 ?
-                Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X2")).StringJoin(" ");
+            if (_viewModel.OutputFormat == TextFormat.Auto) outputFormat = TextFormat.Base64;
+            var inputBytes = _textFormatService.Format(_viewModel.InputText, _viewModel.InputFormat);
+            var cryptoBytes = _aesService.Encrypt(inputBytes, _viewModel.Key, _viewModel.IV);
+            _viewModel.OutputText = _textFormatService.Format(cryptoBytes, outputFormat);
         }
 
         private void DecryptFile()
@@ -197,39 +189,27 @@ namespace CryptoSharp.Wpf.Controls
         {
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
 
+            var outputFormat = _viewModel.OutputFormat;
+            if (_viewModel.OutputFormat == TextFormat.Auto) outputFormat = TextFormat.PlainText;
+
             var cryptoBytes = _viewModel.InputFormat == TextFormat.Base64 ?
                 Convert.FromBase64String(_viewModel.InputText) : _viewModel.InputText.Split(new[] { " " }, StringSplitOptions.None).Select(hexString => Convert.ToByte(hexString, 16)).ToArray();
             var plainBytes = _aesService.Decrypt(cryptoBytes, _viewModel.Key, _viewModel.IV);
 
-            string output;
-            switch (_viewModel.OutputFormat)
-            {
-                case TextFormat.PlainText:
-                    output = Encoding.UTF8.GetString(plainBytes);
-                    break;
-                case TextFormat.Hex:
-                    output = plainBytes.Select(b => b.ToString("X2")).StringJoin(" ");
-                    break;
-                case TextFormat.Base64:
-                    output = Convert.ToBase64String(plainBytes);
-                    break;
-                default: throw new ArgumentOutOfRangeException();
-            }
-            _viewModel.OutputText = output;
+            _viewModel.OutputText = _textFormatService.Format(plainBytes, outputFormat);
         }
 
-        //private void BytesDisplayType_Checked(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrEmpty(_viewModel.OutputText)) return;
-
-        //        EncryptText();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _messageBox.ShowError(ex);
-        //    }
-        //}
+        private void InputTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(_viewModel.InputText)) return;
+                _viewModel.InputFormat = _textFormatService.GetFormat(_viewModel.InputText);
+            }
+            catch (Exception ex)
+            {
+                _messageBox.ShowError(ex);
+            }
+        }
     }
 }

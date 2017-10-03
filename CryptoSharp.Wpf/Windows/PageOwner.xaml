@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="525" Width="775" WindowStartupLocation="CenterScreen" Icon="/content/cryptolock.png">
+        Title="{Binding Title}" MinHeight="525" MinWidth="775" Height="525" Width="775" WindowStartupLocation="CenterScreen" Icon="/content/cryptolock.png">
     <Grid>
         <TabControl Name="PageTabControl"  Margin="15">
                 <TabItem Name="EncryptionTab" Header="Encryption"/>
