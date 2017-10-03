@@ -1,46 +1,46 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using CryptoSharp.Models;
 using CryptoSharp.Tools;
 
-// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
 namespace CryptoSharp.Services
 {
     public class TextFormatService
     {
-        public TextFormat GetFormat(string data)
+        public TextFormat GetFormat(string data, out byte[] formattedData)
         {
             try
             {
-                data.GetBytesFromHex();
+                formattedData = data.GetBytesFromHex();
                 return TextFormat.Hex;
             }
             catch (Exception) {/*ignored*/}
 
             try
             {
-                Convert.FromBase64String(data);
+                formattedData = Convert.FromBase64String(data);
                 return TextFormat.Base64;
             }
             catch (Exception) {/*ignored*/}
+
+            formattedData = Encoding.UTF8.GetBytes(data);
             return TextFormat.PlainText;
         }
 
-        public string Format(byte[] bytes, TextFormat textFormat)
+        public string Format(byte[] data, TextFormat textFormat)
         {
             string output;
             switch (textFormat)
             {
-                case TextFormat.Auto:
                 case TextFormat.PlainText:
-                    output = Encoding.UTF8.GetString(bytes);
+                    output = Encoding.UTF8.GetString(data);
                     break;
                 case TextFormat.Hex:
-                    output = bytes.Select(b => b.ToString("X2")).StringJoin(" ");
+                    output = data.GetHexFromBytes(useSpaces: true);
                     break;
+                case TextFormat.Auto:
                 case TextFormat.Base64:
-                    output = Convert.ToBase64String(bytes);
+                    output = Convert.ToBase64String(data);
                     break;
                 default: throw new ArgumentOutOfRangeException();
             }
@@ -49,22 +49,25 @@ namespace CryptoSharp.Services
 
         public byte[] Format(string data, TextFormat textFormat)
         {
-            byte[] inputBytes;
+            byte[] output;
             switch (textFormat)
             {
                 case TextFormat.Auto:
+                    GetFormat(data, out byte[] formattedData);
+                    output = formattedData;
+                    break;
                 case TextFormat.PlainText:
-                    inputBytes = Encoding.UTF8.GetBytes(data);
+                    output = Encoding.UTF8.GetBytes(data);
                     break;
                 case TextFormat.Hex:
-                    inputBytes = data.GetBytesFromHex();
+                    output = data.GetBytesFromHex();
                     break;
                 case TextFormat.Base64:
-                    inputBytes = Convert.FromBase64String(data);
+                    output = Convert.FromBase64String(data);
                     break;
                 default: throw new ArgumentOutOfRangeException();
             }
-            return inputBytes;
+            return output;
         }
     }
 }

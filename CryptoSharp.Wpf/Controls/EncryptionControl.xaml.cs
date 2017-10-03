@@ -11,6 +11,7 @@ using CryptoSharp.Wpf.ViewModels;
 using Microsoft.Win32;
 using CryptoSharp.Models;
 using CryptoSharp.Services;
+using CryptoSharp.Wpf.Tools;
 
 namespace CryptoSharp.Wpf.Controls
 {
@@ -125,7 +126,7 @@ namespace CryptoSharp.Wpf.Controls
                     Width = 275,
                     Height = 150,
                     Content = inputControl,
-                    //Owner = this,
+                    Owner = this.GetParentWindow(),
                     ShowInTaskbar = false,
                     ResizeMode = ResizeMode.NoResize,
                     Icon = new BitmapImage(new Uri("pack://application:,,,/content/cryptolock.png"))
@@ -204,11 +205,35 @@ namespace CryptoSharp.Wpf.Controls
             try
             {
                 if (string.IsNullOrEmpty(_viewModel.InputText)) return;
-                _viewModel.InputFormat = _textFormatService.GetFormat(_viewModel.InputText);
+                _viewModel.InputFormat = _textFormatService.GetFormat(_viewModel.InputText, out byte[] _);
             }
             catch (Exception ex)
             {
                 _messageBox.ShowError(ex);
+            }
+        }
+
+        private void SaveButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                IsEnabled = false;
+                var dialog = new SaveFileDialog();
+                var result = dialog.ShowDialog() ?? false;
+                if (!result) return;
+                var parentDir = Directory.GetParent(dialog.FileName);
+                if (!parentDir.Exists) throw new DirectoryNotFoundException($"Parent directory does not exist @ {dialog.FileName}");
+                var data = _textFormatService.Format(_viewModel.OutputText, _viewModel.OutputFormat);
+                File.WriteAllBytes(dialog.FileName, data);
+                _messageBox.ShowInfo($"Successfully saved file to {dialog.FileName}");
+            }
+            catch (Exception ex)
+            {
+                _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
             }
         }
     }

@@ -73,6 +73,11 @@
                     <Button Name="DecryptButton" Content="Decrypt" Width="75" Margin="15,0,0,0" Click="DecryptButton_OnClick"/>
                 </StackPanel>
             </StackPanel>
+            <StackPanel Grid.Column="1" Grid.Row="2" Margin="15,15,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Save" Width="75" Margin="0,0,0,0" Click="SaveButton_OnClick"/>
+                </StackPanel>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

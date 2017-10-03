@@ -16,6 +16,7 @@ namespace CryptoSharp.Wpf.Controls
             Background = Brushes.LightGray;
 
             _messageBoxFacade = messageBoxFacade ?? throw new ArgumentNullException(nameof(messageBoxFacade));
+            Loaded += (sender, args) => { InputTextBox.Focus(); };
         }
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)

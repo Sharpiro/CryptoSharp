@@ -11,7 +11,8 @@ namespace CryptoSharp.Tools
 {
     public static class Extensions
     {
-        public static byte[] GetBytes(this Stream stream)
+        [NotNull]
+        public static byte[] GetBytes([NotNull]this Stream stream)
         {
             using (var ms = new MemoryStream())
             {
@@ -20,7 +21,8 @@ namespace CryptoSharp.Tools
             }
         }
 
-        public static byte[] GetBytesFromHex(this string hexString)
+        [NotNull]
+        public static byte[] GetBytesFromHex([NotNull]this string hexString)
         {
             hexString = hexString.Replace(" ", string.Empty);
             if (hexString.Length % 2 != 0) throw new InvalidOperationException("Hex string must be an even amount of characters in X2 format: 'FF'");
@@ -32,7 +34,15 @@ namespace CryptoSharp.Tools
                 .ToArray();
         }
 
-        public static char[] GetInsecureChars(this SecureString secureString)
+        [NotNull]
+        public static string GetHexFromBytes([NotNull]this byte[] bytes, bool useSpaces = false)
+        {
+            var seperator = useSpaces ? " " : string.Empty;
+            return bytes.Select(b => b.ToString("X2")).StringJoin(seperator);
+        }
+
+        [NotNull]
+        public static char[] GetInsecureChars([NotNull]this SecureString secureString)
         {
             unsafe
             {
@@ -61,6 +71,7 @@ namespace CryptoSharp.Tools
             }
         }
 
+        [NotNull]
         public static byte[] GetBytes([NotNull]this RandomNumberGenerator randomizer, int length)
         {
             if (randomizer == null) throw new ArgumentNullException(nameof(randomizer));

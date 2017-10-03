@@ -10,7 +10,7 @@
         <StackPanel Margin="15">
             <TextBox Name="InputTextBox" Width="150"/>
             <StackPanel Margin="0,15,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Name="OkButton" Content="Ok" Height="25" Width="50" Click="OkButton_OnClick"/>
+                <Button Name="OkButton" Content="Ok" Height="25" Width="50" Click="OkButton_OnClick" IsDefault="True"/>
                 <Button Name="CancelButton" Content="Cancel" Height="25" Width="50" Margin="15,0,0,0" Click="CancelButton_OnClick"/>
             </StackPanel>
         </StackPanel>
