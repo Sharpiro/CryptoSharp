@@ -37,6 +37,7 @@ namespace CryptoSharp
             var certificateGenerator = new X509V3CertificateGenerator();
             var serialNumber = BigIntegers.CreateRandomInRange(BigInteger.One, BigInteger.ValueOf(long.MaxValue), random);
             certificateGenerator.SetSerialNumber(serialNumber);
+#pragma warning disable CS0618 // Type or member is obsolete
             certificateGenerator.SetSignatureAlgorithm(SignatureAlgorithm);
             certificateGenerator.SetIssuerDN(new X509Name($"CN={subject}"));
             certificateGenerator.SetSubjectDN(new X509Name($"CN={subject}"));
@@ -48,6 +49,7 @@ namespace CryptoSharp
             certificateGenerator.SetPublicKey(subjectKeyPair.Public);
             var issuerKeyPair = subjectKeyPair;
             var certificate = certificateGenerator.Generate(issuerKeyPair.Private, random);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             //get win cert
             var store = new Pkcs12Store();

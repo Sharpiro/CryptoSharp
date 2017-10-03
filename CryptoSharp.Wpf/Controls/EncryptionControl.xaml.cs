@@ -1,17 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using CryptoSharp.Hashing;
 using CryptoSharp.Symmetric;
-using CryptoSharp.Wpf.Models;
 using CryptoSharp.Wpf.ViewModels;
-using CryptoSharp.Wpf.Windows;
 using Microsoft.Win32;
 using CryptoSharp.Models;
+using CryptoSharp.Services;
+using CryptoSharp.Wpf.Tools;
 
 namespace CryptoSharp.Wpf.Controls
 {
@@ -20,6 +20,7 @@ namespace CryptoSharp.Wpf.Controls
         private readonly EncryptionControlViewModel _viewModel;
         private readonly MessageBoxFacade _messageBox = new MessageBoxFacade();
         private readonly AesService _aesService = new AesService(new Sha256BitHasher(), new MDFive128BitHasher());
+        private readonly TextFormatService _textFormatService = new TextFormatService();
 
         public EncryptionControl(EncryptionControlViewModel viewModel)
         {
@@ -50,7 +51,7 @@ namespace CryptoSharp.Wpf.Controls
                 _viewModel.OutputText = null;
                 await Task.Run(() =>
                 {
-                    if (_viewModel.CryptoSource == CryptoSource.File)
+                    if (_viewModel.InputFormat == TextFormat.File)
                         EncryptFile();
                     else
                         EncryptText();
@@ -74,8 +75,10 @@ namespace CryptoSharp.Wpf.Controls
                 _viewModel.OutputText = null;
                 await Task.Run(() =>
                 {
-                    if (_viewModel.CryptoSource == CryptoSource.File)
+                    if (_viewModel.InputFormat == TextFormat.File)
                         DecryptFile();
+                    else if (_viewModel.InputFormat == TextFormat.PlainText)
+                        throw new InvalidOperationException("Plain text is invalid for decryption");
                     else
                         DecryptText();
                 });
@@ -123,7 +126,7 @@ namespace CryptoSharp.Wpf.Controls
                     Width = 275,
                     Height = 150,
                     Content = inputControl,
-                    //Owner = this,
+                    Owner = this.GetParentWindow(),
                     ShowInTaskbar = false,
                     ResizeMode = ResizeMode.NoResize,
                     Icon = new BitmapImage(new Uri("pack://application:,,,/content/cryptolock.png"))
@@ -150,7 +153,7 @@ namespace CryptoSharp.Wpf.Controls
             if (!fileInfo.Exists) throw new FileNotFoundException($"No file found @ '{_viewModel.FilePath}'");
             var bytes = File.ReadAllBytes(_viewModel.FilePath);
             var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
-            var parentDir = Directory.GetParent(_viewModel.FilePath);
+            //var parentDir = Directory.GetParent(_viewModel.FilePath);
             File.WriteAllBytes($"{fileInfo.FullName}.crypto", cryptoBytes);
             _messageBox.ShowInfo("Successfully encrypted file");
         }
@@ -158,10 +161,17 @@ namespace CryptoSharp.Wpf.Controls
         private void EncryptText()
         {
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
-            var bytes = Encoding.UTF8.GetBytes(_viewModel.InputText);
-            var cryptoBytes = _aesService.Encrypt(bytes, _viewModel.Key, _viewModel.IV);
-            _viewModel.OutputText = _viewModel.BytesStringDisplay == BytesDisplayType.Base64 ?
-                Convert.ToBase64String(cryptoBytes) : cryptoBytes.Select(b => b.ToString("X2")).StringJoin(" ");
+
+            var outputFormat = _viewModel.OutputFormat;
+            if (_viewModel.OutputFormat == TextFormat.PlainText)
+            {
+                _viewModel.OutputFormat = TextFormat.Auto;
+                outputFormat = TextFormat.Base64;
+            }
+            if (_viewModel.OutputFormat == TextFormat.Auto) outputFormat = TextFormat.Base64;
+            var inputBytes = _textFormatService.Format(_viewModel.InputText, _viewModel.InputFormat);
+            var cryptoBytes = _aesService.Encrypt(inputBytes, _viewModel.Key, _viewModel.IV);
+            _viewModel.OutputText = _textFormatService.Format(cryptoBytes, outputFormat);
         }
 
         private void DecryptFile()
@@ -180,24 +190,50 @@ namespace CryptoSharp.Wpf.Controls
         {
             if (string.IsNullOrEmpty(_viewModel.InputText)) throw new ArgumentException("Must provide input text");
 
-            var cryptoBytes = _viewModel.BytesStringDisplay == BytesDisplayType.Base64 ?
+            var outputFormat = _viewModel.OutputFormat;
+            if (_viewModel.OutputFormat == TextFormat.Auto) outputFormat = TextFormat.PlainText;
+
+            var cryptoBytes = _viewModel.InputFormat == TextFormat.Base64 ?
                 Convert.FromBase64String(_viewModel.InputText) : _viewModel.InputText.Split(new[] { " " }, StringSplitOptions.None).Select(hexString => Convert.ToByte(hexString, 16)).ToArray();
             var plainBytes = _aesService.Decrypt(cryptoBytes, _viewModel.Key, _viewModel.IV);
-            var plainText = Encoding.UTF8.GetString(plainBytes);
-            _viewModel.OutputText = plainText;
+
+            _viewModel.OutputText = _textFormatService.Format(plainBytes, outputFormat);
         }
 
-        private void BytesDisplayType_Checked(object sender, RoutedEventArgs e)
+        private void InputTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             try
             {
-                if (string.IsNullOrEmpty(_viewModel.OutputText)) return;
-
-                EncryptText();
+                if (string.IsNullOrEmpty(_viewModel.InputText)) return;
+                _viewModel.InputFormat = _textFormatService.GetFormat(_viewModel.InputText, out byte[] _);
             }
             catch (Exception ex)
             {
                 _messageBox.ShowError(ex);
+            }
+        }
+
+        private void SaveButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                IsEnabled = false;
+                var dialog = new SaveFileDialog();
+                var result = dialog.ShowDialog() ?? false;
+                if (!result) return;
+                var parentDir = Directory.GetParent(dialog.FileName);
+                if (!parentDir.Exists) throw new DirectoryNotFoundException($"Parent directory does not exist @ {dialog.FileName}");
+                var data = _textFormatService.Format(_viewModel.OutputText, _viewModel.OutputFormat);
+                File.WriteAllBytes(dialog.FileName, data);
+                _messageBox.ShowInfo($"Successfully saved file to {dialog.FileName}");
+            }
+            catch (Exception ex)
+            {
+                _messageBox.ShowError(ex);
+            }
+            finally
+            {
+                IsEnabled = true;
             }
         }
     }

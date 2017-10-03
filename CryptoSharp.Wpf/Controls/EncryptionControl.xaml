@@ -8,55 +8,76 @@
              xmlns:wpfModels="clr-namespace:CryptoSharp.Wpf.Models"
              xmlns:models="clr-namespace:CryptoSharp.Models;assembly=CryptoSharp"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="675" Background="White">
+             d:DesignHeight="430" d:DesignWidth="675" Background="White">
     <UserControl.Resources>
         <tools:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+        <tools:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
-        <StackPanel Margin="15">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Key:" Width="40"/>
-                <TextBox Text="{Binding KeyString}" Width="400"/>
-                <Button Name="GenKeyButton" Content="Gen" Width="75" Margin="15,0,0,0" Click="GenKeyButton_OnClick"/>
-                <Button Name="GenKeyFromButton" Content="Gen From" Width="75" Margin="15,0,0,0" Click="GenKeyFromButton_OnClick"/>
+        <Grid Margin="15,15,15,320">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="400*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Key:" Width="40"/>
+            <TextBox Grid.Column="1" Grid.Row="0" Height="20" Text="{Binding KeyString}"/>
+            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                <Button Name="GenKeyButton" Content="Gen" Width="75" Height="20" Margin="15,0,0,0" Click="GenKeyButton_OnClick"/>
+                <Button Name="GenKeyFromButton" Content="Gen From" Width="75" Height="20" Margin="15,0,0,0" Click="GenKeyFromButton_OnClick"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                <TextBlock Text="IV:" Width="40"/>
-                <TextBox Text="{Binding IVString}" Width="400"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0" IsEnabled="{Binding IsFileSource}">
-                <TextBlock Text="Path:" Width="40"></TextBlock>
-                <TextBox Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" Width="400"/>
-                <Button Name="BrowseButton" Content="Browse" Width="75" Margin="15,0,0,0" Click="BrowseButton_Click"/>
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="IV:" Width="40"/>
+            <TextBox Grid.Column="1" Grid.Row="1" Height="20" Text="{Binding IVString}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Path:" Width="40" IsEnabled="{Binding IsFileSource}"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Height="20" IsEnabled="{Binding IsFileSource}" Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" IsEnabled="{Binding IsFileSource}">
+                <Button Name="BrowseButton" Content="Browse" Width="75" Height="20" Margin="15,0,0,0" Click="BrowseButton_Click"/>
                 <StackPanel Width="25" Margin="15,0,0,0">
                     <Image Width="25" Height="20" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Source="{Binding MarkPath}"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton Content="File" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:CryptoSource.File}}"/>
-                    <RadioButton Content="Text" IsChecked="{Binding CryptoSource, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static wpfModels:CryptoSource.Text}}" Margin="15,0,0,0"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="300,0,0,0">
-                    <RadioButton Content="Hex" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesStringDisplay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Hex}}"/>
-                    <RadioButton Content="Base64" Checked="BytesDisplayType_Checked" IsChecked="{Binding BytesStringDisplay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:BytesDisplayType.Base64}}" Margin="15,0,0,0"/>
+        </Grid>
+        <Grid Margin="15,110,15,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                <RadioButton Content="File" IsChecked="{Binding InputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:TextFormat.File}}"/>
+                <RadioButton Content="Text" IsChecked="{Binding InputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:TextFormat.PlainText}}" Margin="15,0,0,0"/>
+                <RadioButton Content="Hex" IsChecked="{Binding InputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:TextFormat.Hex}}" Margin="15,0,0,0"/>
+                <RadioButton Content="Base64" IsChecked="{Binding InputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:TextFormat.Base64}}" Margin="15,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="15,0,0,0" IsEnabled="{Binding IsFileSource, Converter={StaticResource InverseBooleanConverter}}">
+                <RadioButton Content="Auto" IsChecked="{Binding OutputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:TextFormat.Auto}}"/>
+                <RadioButton Content="Text" IsChecked="{Binding OutputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:TextFormat.PlainText}}" Margin="15,0,0,0"/>
+                <RadioButton Content="Hex" IsChecked="{Binding OutputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:TextFormat.Hex}}" Margin="15,0,0,0"/>
+                <RadioButton Content="Base64" IsChecked="{Binding OutputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:TextFormat.Base64}}" Margin="15,0,0,0"/>
+            </StackPanel>
+            <TextBox Grid.Column="0" Grid.Row="1" Margin="0,0,15,0" IsEnabled="{Binding IsFileSource, Converter={StaticResource InverseBooleanConverter}}" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextChanged="InputTextBox_OnTextChanged"/>
+            <TextBox Margin="15,0,0,0" Grid.Column="1" Grid.Row="1" IsEnabled="{Binding IsFileSource, Converter={StaticResource InverseBooleanConverter}}" Text="{Binding OutputText}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" IsReadOnly="True"/>
+            <StackPanel Grid.Column="0" Grid.Row="2" Margin="0,15,0,0">
+                <StackPanel Margin="0,0,0,0" Orientation="Horizontal">
+                    <Button Name="EncrytpButton" Content="Encrypt" Width="75" Margin="0,0,0,0" Click="EncryptButton_OnClick"/>
+                    <Button Name="DecryptButton" Content="Decrypt" Width="75" Margin="15,0,0,0" Click="DecryptButton_OnClick"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Margin="0,5,0,0" Orientation="Horizontal" IsEnabled="{Binding IsTextSource}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Input:" Width="50"/>
-                    <TextBox Text="{Binding InputText}" Width="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
-                    <TextBlock Text="Output:" Width="50"/>
-                    <TextBox Text="{Binding OutputText}" Width="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True"/>
+            <StackPanel Grid.Column="1" Grid.Row="2" Margin="15,15,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Save" Width="75" Margin="0,0,0,0" Click="SaveButton_OnClick"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
-                <Button Name="EncrytpButton" Content="Encrypt" Width="75" Margin="0,0,0,0" Click="EncryptButton_OnClick"/>
-                <Button Name="DecryptButton" Content="Decrypt" Width="75" Margin="15,0,0,0" Click="DecryptButton_OnClick"/>
-            </StackPanel>
-        </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

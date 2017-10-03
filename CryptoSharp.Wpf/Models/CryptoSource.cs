@@ -3,6 +3,7 @@
     public enum CryptoSource
     {
         File,
-        Text
+        Text,
+        Hex
     }
 }
