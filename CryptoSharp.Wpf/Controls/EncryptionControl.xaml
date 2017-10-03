@@ -15,35 +15,43 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
-        <StackPanel Margin="15">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Key:" Width="40"/>
-                <TextBox Text="{Binding KeyString}" Width="400"/>
-                <Button Name="GenKeyButton" Content="Gen" Width="75" Margin="15,0,0,0" Click="GenKeyButton_OnClick"/>
-                <Button Name="GenKeyFromButton" Content="Gen From" Width="75" Margin="15,0,0,0" Click="GenKeyFromButton_OnClick"/>
+        <Grid Margin="15,15,15,320">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="400*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Key:" Width="40"/>
+            <TextBox Grid.Column="1" Grid.Row="0" Height="20" Text="{Binding KeyString}"/>
+            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                <Button Name="GenKeyButton" Content="Gen" Width="75" Height="20" Margin="15,0,0,0" Click="GenKeyButton_OnClick"/>
+                <Button Name="GenKeyFromButton" Content="Gen From" Width="75" Height="20" Margin="15,0,0,0" Click="GenKeyFromButton_OnClick"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                <TextBlock Text="IV:" Width="40"/>
-                <TextBox Text="{Binding IVString}" Width="400"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0" IsEnabled="{Binding IsFileSource}">
-                <TextBlock Text="Path:" Width="40"></TextBlock>
-                <TextBox Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" Width="400"/>
-                <Button Name="BrowseButton" Content="Browse" Width="75" Margin="15,0,0,0" Click="BrowseButton_Click"/>
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="IV:" Width="40"/>
+            <TextBox Grid.Column="1" Grid.Row="1" Height="20" Text="{Binding IVString}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Path:" Width="40" IsEnabled="{Binding IsFileSource}"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Height="20" IsEnabled="{Binding IsFileSource}" Text="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" IsEnabled="{Binding IsFileSource}">
+                <Button Name="BrowseButton" Content="Browse" Width="75" Height="20" Margin="15,0,0,0" Click="BrowseButton_Click"/>
                 <StackPanel Width="25" Margin="15,0,0,0">
                     <Image Width="25" Height="20" Visibility="{Binding IsFileSource, Converter={StaticResource BooleanToVisibilityConverter}}" Source="{Binding MarkPath}"/>
                 </StackPanel>
             </StackPanel>
-        </StackPanel>
-        <Grid Margin="15,125,15,30">
+        </Grid>
+        <Grid Margin="15,110,15,5">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                 <RadioButton Content="File" IsChecked="{Binding InputFormat, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static models:TextFormat.File}}"/>
@@ -66,27 +74,5 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-
-
-        <!--<StackPanel Grid.Column="0" Margin="0,0,15,0">
-                -->
-        <!--<TextBlock Text="Input:" Width="50"/>-->
-        <!--
-            </StackPanel>-->
-        <!--<StackPanel Grid.Column="1" Margin="15,0,0,0">
-                        <TextBlock Text="Output:" Width="50"/>
-                        <TextBox Text="{Binding OutputText}" MinWidth="250" MinHeight="225" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-                    </StackPanel>-->
-        <!--<StackPanel Margin="0,5,0,0" Orientation="Horizontal" IsEnabled="{Binding IsFileSource, Converter={StaticResource InverseBooleanConverter}}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Input:" Width="50"/>
-                    <TextBox Text="{Binding InputText}" MinWidth="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
-                    <TextBlock Text="Output:" Width="50"/>
-                    <TextBox Text="{Binding OutputText}" MinWidth="250" Height="225" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-                </StackPanel>
-            </StackPanel>-->
-
     </Grid>
 </UserControl>
