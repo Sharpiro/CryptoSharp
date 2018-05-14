@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F9AFD245-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoSharp.Tests46", "CryptoSharp.Tests46\CryptoSharp.Tests46.csproj", "{0438ABF3-46C5-46E8-84F2-7BB1FDB80AE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{4D647BED-BF53-4102-BF44-2C53C1F333AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{0438ABF3-46C5-46E8-84F2-7BB1FDB80AE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0438ABF3-46C5-46E8-84F2-7BB1FDB80AE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0438ABF3-46C5-46E8-84F2-7BB1FDB80AE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D647BED-BF53-4102-BF44-2C53C1F333AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D647BED-BF53-4102-BF44-2C53C1F333AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D647BED-BF53-4102-BF44-2C53C1F333AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D647BED-BF53-4102-BF44-2C53C1F333AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,5 +45,9 @@ Global
 		{1CAE28A1-C350-46BD-B20A-E6EDE17D303A} = {CA3044FC-C8E3-4591-AEE1-CB59F23A1C1E}
 		{689FB638-8488-4256-A0FB-30E7832A240B} = {CA3044FC-C8E3-4591-AEE1-CB59F23A1C1E}
 		{0438ABF3-46C5-46E8-84F2-7BB1FDB80AE7} = {F9AFD245-9385-4019-8138-8C7BE363AC23}
+		{4D647BED-BF53-4102-BF44-2C53C1F333AF} = {CA3044FC-C8E3-4591-AEE1-CB59F23A1C1E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4ED287ED-CCE6-4BDF-A26B-ACD4B366AACF}
 	EndGlobalSection
 EndGlobal
