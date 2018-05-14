@@ -1,84 +1,169 @@
-import { Component, OnInit } from '@angular/core';
-import { CustomFormControl, hexValidator } from '../shared/custom-form-control';
-import { Validators } from '@angular/forms';
-import * as cryptoBrowserify from "crypto-browserify"
-import * as cryptoType from "crypto"
+import { Component, OnInit } from '@angular/core'
+import { CustomFormControl, hexValidator, base64Validator } from '../shared/custom-form-control'
+import { Validators } from '@angular/forms'
+import * as crypto from "crypto-browserify"
 import { Buffer } from "buffer"
-
-const crypto: typeof cryptoType = cryptoBrowserify
+import * as toastr from "toastr"
+import { trigger, state, transition, animate, style, keyframes } from '@angular/animations'
+import { flashAnimation, flashState } from '../shared/custom-animations'
 
 @Component({
   selector: 'app-encryption',
   templateUrl: './encryption.component.html',
-  styleUrls: ['./encryption.component.css']
+  styleUrls: ['./encryption.component.css'],
+  animations: [flashAnimation]
 })
 export class EncryptionComponent implements OnInit {
-  keyControl = new CustomFormControl('', [Validators.minLength(32 * 2), Validators.maxLength(32 * 2), hexValidator])
-  ivControl = new CustomFormControl('', [Validators.minLength(16 * 2), Validators.maxLength(16 * 2), hexValidator])
-  plainControl = new CustomFormControl('', [hexValidator])
-  cryptoControl = new CustomFormControl()
-  // cryptoControl = new CustomFormControl('', [Validators.minLength(16 * 2), hexValidator])
+  keyControl = new CustomFormControl('', [Validators.required, Validators.minLength(32 * 2), Validators.maxLength(32 * 2), hexValidator])
+  ivControl = new CustomFormControl('', [Validators.required, Validators.minLength(16 * 2), Validators.maxLength(16 * 2), hexValidator])
+  plainControl = new CustomFormControl('', Validators.required)
+  cryptoControl = new CustomFormControl('', [Validators.required, hexValidator, Validators.minLength(16 * 2)])
   autoIV = true
+  encoding: encoding = "utf8"
+  keyControlState: flashState = ''
+  ivControlState: flashState = ''
+  plainControlState: flashState = ''
+  cryptoControlState: flashState = ''
+  keyButtonName: "Save" | "Clear" = "Save"
 
-  constructor() {
-    this.plainControl.setValue("aaffaa")
+  constructor() { }
+
+  ngOnInit() {
+    const keyHex = localStorage.getItem("key")
+    if (keyHex) {
+      this.keyControl.setValue(keyHex)
+      this.keyButtonName = "Clear"
+      this.keyControlState = "greenflash"
+    }
   }
 
-  ngOnInit() { }
+  onKeyStoreClick() {
+    if (this.keyControl.invalidOrEmpty) {
+      this.keyControlState = 'redflash'
+      this.keyControl.markAsDirty()
+      return
+    }
+    if (this.keyButtonName === "Save") {
+      localStorage.setItem("key", this.keyControl.value)
+      this.keyButtonName = "Clear"
+      this.keyControlState = "greenflash"
+      return
+    }
+
+    localStorage.removeItem("key")
+    this.keyButtonName = "Save"
+    this.keyControlState = "greenflash"
+  }
+
+  onSendClick() {
+    if (this.cryptoControl.invalidOrEmpty) {
+      this.cryptoControlState = 'redflash'
+      this.cryptoControl.markAsDirty()
+      return
+    }
+    window.open(`mailto:?Subject=Message&Body=${this.cryptoControl.value}`, "_parent")
+  }
+
+  onEncodingChange() {
+    switch (this.encoding) {
+      case "utf8":
+        this.plainControl.clearValidators()
+        break
+      case "hex":
+        this.plainControl.setValidators(hexValidator)
+        break
+      case "base64":
+        this.plainControl.setValidators(base64Validator)
+        break
+    }
+    this.plainControl.reset()
+  }
 
   onGenerateClick() {
+    if (this.keyButtonName === "Clear") {
+      toastr.error("You must clear the saved key before generating a new one")
+      return
+    }
     this.keyControl.setValue(crypto.randomBytes(32).toString("hex"))
+    this.keyControlState = 'greenflash'
+    if (this.autoIV) return
+
     this.ivControl.setValue(crypto.randomBytes(16).toString("hex"))
+    this.ivControlState = 'greenflash'
   }
 
   onEncryptClick() {
-    if (this.keyControl.invalidOrEmpty || this.plainControl.invalidOrEmpty) {
-      console.log("failure")
+    this.cryptoControl.reset()
+    if (this.keyControl.invalidOrEmpty) {
+      this.keyControlState = 'redflash'
+      this.keyControl.markAsDirty()
       return
     }
     if (!this.autoIV && this.ivControl.invalidOrEmpty) {
-      console.log("Must provide an IV when 'autoIV' is disabled")
+      this.ivControlState = 'redflash'
       return
     }
-    const key = Buffer.from(this.keyControl.value, "hex")
-    const iv = this.autoIV ? crypto.randomBytes(16) : Buffer.from(this.ivControl.value, "hex")
-    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
-
-    let encrypted = cipher.update(this.plainControl.value, 'utf8')
-
-    encrypted = Buffer.concat([encrypted, cipher.final()])
-    if (this.autoIV) {
-      encrypted = Buffer.concat([encrypted, iv])
+    if (this.plainControl.invalidOrEmpty) {
+      this.plainControlState = 'redflash'
+      this.plainControl.markAsDirty()
+      return
     }
-    // console.log(encrypted.toString("hex"))
-    // console.log(iv.toString("hex"));
-    this.cryptoControl.setValue(encrypted.toString("hex"))
+
+
+    try {
+      const key = Buffer.from(this.keyControl.value, "hex")
+      const iv = this.autoIV ? crypto.randomBytes(16) : Buffer.from(this.ivControl.value, "hex")
+      const cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
+
+      const plainTextBuffer = Buffer.from(this.plainControl.value, this.encoding)
+      let encrypted = cipher.update(plainTextBuffer)
+
+      encrypted = Buffer.concat([encrypted, cipher.final()])
+      if (this.autoIV) {
+        encrypted = Buffer.concat([encrypted, iv])
+      }
+      this.cryptoControl.setValue(encrypted.toString("hex"))
+      this.cryptoControlState = 'greenflash'
+    } catch (ex) {
+      toastr.error(ex)
+    }
   }
 
   onDecryptClick() {
-    if (this.keyControl.invalidOrEmpty || this.cryptoControl.invalidOrEmpty) {
-      console.log("failure")
+    this.plainControl.reset()
+    if (this.keyControl.invalidOrEmpty) {
+      this.keyControlState = 'redflash'
+      this.keyControl.markAsDirty()
       return
     }
     if (!this.autoIV && this.ivControl.invalidOrEmpty) {
-      console.log("Must provide an IV when 'autoIV' is disabled")
+      this.ivControlState = 'redflash'
       return
     }
-    const key = Buffer.from(this.keyControl.value, "hex")
-
-    let iv: Buffer
-    let encryptedBuffer = Buffer.from(this.cryptoControl.value, "hex")
-    if (this.autoIV) {
-      iv = encryptedBuffer.slice(-16)
-      encryptedBuffer = encryptedBuffer.slice(0, -16)
-    } else {
-      iv = Buffer.from(this.ivControl.value, "hex")
+    if (this.cryptoControl.invalidOrEmpty) {
+      this.cryptoControlState = 'redflash'
+      this.cryptoControl.markAsDirty()
+      return
     }
 
-    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
-    let decrypted = decipher.update(encryptedBuffer)
-    decrypted = Buffer.concat([decrypted, decipher.final()])
-    console.log(decrypted.toString("utf8"))
-    this.plainControl.setValue(decrypted.toString("utf8"))
+    try {
+      const key = Buffer.from(this.keyControl.value, "hex")
+      let iv: Buffer
+      let encryptedBuffer = Buffer.from(this.cryptoControl.value, "hex")
+      if (this.autoIV) {
+        iv = encryptedBuffer.slice(-16)
+        encryptedBuffer = encryptedBuffer.slice(0, -16)
+      } else {
+        iv = Buffer.from(this.ivControl.value, "hex")
+      }
+
+      const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
+      let decrypted = decipher.update(encryptedBuffer)
+      decrypted = Buffer.concat([decrypted, decipher.final()])
+      this.plainControl.setValue(decrypted.toString(this.encoding))
+      this.plainControlState = 'greenflash'
+    } catch (ex) {
+      toastr.error(ex)
+    }
   }
 }

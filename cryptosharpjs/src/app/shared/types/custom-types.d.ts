@@ -1,0 +1,1 @@
+type encoding = "utf8" | "hex" | "base64"

@@ -1,6 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~toastr/build/toastr.min.css";
+
+.container{
+    margin: auto;
+    width: 95%;
+}
 
 .row{
-    padding:10px;
+    padding-top:10px;
+    padding-bottom:10px;
 }

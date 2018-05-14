@@ -1,44 +1,77 @@
-<div class="row">
-  <mat-form-field class="form-width">
-    <input matInput placeholder="Key" [formControl]="keyControl">
-    <mat-error *ngIf="keyControl.hasError('maxlength') || keyControl.hasError('minlength')">
-      key must be exactly 32 bytes
-    </mat-error>
-    <mat-error *ngIf="keyControl.hasError('hex')">
-      invalid hex
-    </mat-error>
-  </mat-form-field>
+<div class="container">
+  <div class="row">
+    <mat-form-field class="form-width" [@flash]="keyControlState" (@flash.done)="keyControlState = ''">
+      <input matInput [class.keySaved]="keyButtonName == 'Clear'" placeholder="Key" [formControl]="keyControl">
+      <mat-error *ngIf="keyControl.hasError('required')">
+        required
+      </mat-error>
+      <mat-error *ngIf="keyControl.hasError('maxlength') || keyControl.hasError('minlength')">
+        key must be exactly 32 bytes
+      </mat-error>
+      <mat-error *ngIf="keyControl.hasError('hex')">
+        invalid hex
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field class="form-width" *ngIf="!autoIV">
-    <input matInput placeholder="IV" [formControl]="ivControl">
-    <mat-error *ngIf="ivControl.hasError('maxlength') || ivControl.hasError('minlength')">
-      key must be exactly 16 bytes
-    </mat-error>
-    <mat-error *ngIf="ivControl.hasError('hex')">
-      invalid hex
-    </mat-error>
-  </mat-form-field>
+    <mat-form-field class="form-width" *ngIf="!autoIV" [@flash]="ivControlState" (@flash.done)="ivControlState = ''">
+      <input matInput placeholder="IV" [formControl]="ivControl">
+      <mat-error *ngIf="ivControl.hasError('required')">
+        required
+      </mat-error>
+      <mat-error *ngIf="ivControl.hasError('maxlength') || ivControl.hasError('minlength')">
+        key must be exactly 16 bytes
+      </mat-error>
+      <mat-error *ngIf="ivControl.hasError('hex')">
+        invalid hex
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field class="form-width">
-    <input matInput placeholder="plain" [formControl]="plainControl">
-    <mat-error *ngIf="plainControl.hasError('hex')">
-      invalid hex
-    </mat-error>
-  </mat-form-field>
+    <div class="row">
+      <mat-radio-group [(ngModel)]="encoding" (change)="onEncodingChange()">
+        <span>
+          <mat-radio-button value="utf8">UTF8</mat-radio-button>
+        </span>
+        <span style="padding-left:15px">
+          <mat-radio-button value="hex">Hex</mat-radio-button>
+        </span>
+        <span style="padding-left:15px">
+          <mat-radio-button value="base64">Base64</mat-radio-button>
+        </span>
+      </mat-radio-group>
+    </div>
 
-  <mat-form-field class="form-width">
-    <input matInput placeholder="crypto" [formControl]="cryptoControl">
-    <mat-error *ngIf="cryptoControl.hasError('minlength')">
-      key must be at least 16 bytes
-    </mat-error>
-    <mat-error *ngIf="cryptoControl.hasError('hex')">
-      invalid hex
-    </mat-error>
-  </mat-form-field>
-</div>
-<div class="row">
-  <button class="button" mat-raised-button (click)="onGenerateClick($event)">Generate</button>
-  <button class="button" mat-raised-button (click)="onEncryptClick($event)">Encrypt</button>
-  <button class="button" mat-raised-button (click)="onDecryptClick($event)">Decrypt</button>
-  <mat-checkbox [(ngModel)]="autoIV">Auto IV</mat-checkbox>
+    <mat-form-field class="form-width" [@flash]="plainControlState" (@flash.done)="plainControlState = ''">
+      <input matInput placeholder="plain" [formControl]="plainControl">
+      <mat-error *ngIf="plainControl.hasError('required')">
+        required
+      </mat-error>
+      <mat-error *ngIf="plainControl.hasError('hex')">
+        invalid hex
+      </mat-error>
+      <mat-error *ngIf="plainControl.hasError('base64')">
+        invalid base64
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="form-width" [@flash]="cryptoControlState" (@flash.done)="cryptoControlState = ''">
+      <input matInput placeholder="crypto" [formControl]="cryptoControl">
+      <mat-error *ngIf="cryptoControl.hasError('required')">
+        required
+      </mat-error>
+      <mat-error *ngIf="cryptoControl.hasError('minlength')">
+        key must be at least 16 bytes
+      </mat-error>
+      <mat-error *ngIf="cryptoControl.hasError('hex')">
+        invalid hex
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <button class="button" mat-raised-button (click)="onGenerateClick()">Generate</button>
+    <button class="button" mat-raised-button (click)="onEncryptClick()">Encrypt</button>
+    <button class="button" mat-raised-button (click)="onDecryptClick()">Decrypt</button>
+    <button class="button" mat-raised-button (click)="onKeyStoreClick()">{{keyButtonName}}</button>
+    <button class="button" mat-raised-button (click)="onSendClick()">Send</button>
+    <mat-checkbox [(ngModel)]="autoIV">Auto IV</mat-checkbox>
+  </div>
 </div>
