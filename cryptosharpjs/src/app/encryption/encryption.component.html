@@ -1,0 +1,44 @@
+<div class="row">
+  <mat-form-field class="form-width">
+    <input matInput placeholder="Key" [formControl]="keyControl">
+    <mat-error *ngIf="keyControl.hasError('maxlength') || keyControl.hasError('minlength')">
+      key must be exactly 32 bytes
+    </mat-error>
+    <mat-error *ngIf="keyControl.hasError('hex')">
+      invalid hex
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="form-width" *ngIf="!autoIV">
+    <input matInput placeholder="IV" [formControl]="ivControl">
+    <mat-error *ngIf="ivControl.hasError('maxlength') || ivControl.hasError('minlength')">
+      key must be exactly 16 bytes
+    </mat-error>
+    <mat-error *ngIf="ivControl.hasError('hex')">
+      invalid hex
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="form-width">
+    <input matInput placeholder="plain" [formControl]="plainControl">
+    <mat-error *ngIf="plainControl.hasError('hex')">
+      invalid hex
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="form-width">
+    <input matInput placeholder="crypto" [formControl]="cryptoControl">
+    <mat-error *ngIf="cryptoControl.hasError('minlength')">
+      key must be at least 16 bytes
+    </mat-error>
+    <mat-error *ngIf="cryptoControl.hasError('hex')">
+      invalid hex
+    </mat-error>
+  </mat-form-field>
+</div>
+<div class="row">
+  <button class="button" mat-raised-button (click)="onGenerateClick($event)">Generate</button>
+  <button class="button" mat-raised-button (click)="onEncryptClick($event)">Encrypt</button>
+  <button class="button" mat-raised-button (click)="onDecryptClick($event)">Decrypt</button>
+  <mat-checkbox [(ngModel)]="autoIV">Auto IV</mat-checkbox>
+</div>

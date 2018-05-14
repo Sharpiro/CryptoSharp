@@ -1,0 +1,23 @@
+<div class="row">
+  <mat-form-field class="form-width">
+    <input matInput placeholder="My Public Key" [formControl]="myPubKeyControl" readonly>
+  </mat-form-field>
+
+  <mat-form-field class="form-width">
+    <input matInput placeholder="Other Public Key" [formControl]="otherPubKeyControl">
+    <mat-error *ngIf="otherPubKeyControl.hasError('hex')">
+      invalid hex
+    </mat-error>
+    <mat-error *ngIf="otherPubKeyControl.hasError('minlength') || otherPubKeyControl.hasError('maxlength')">
+      must be exactly 256 bits of data
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="form-width">
+    <input matInput placeholder="Secret" [formControl]="secretControl" readonly>
+  </mat-form-field>
+</div>
+<div class="row">
+  <button class="button" mat-raised-button (click)="onGenerateKeysClick($event)">Generate My Keys</button>
+  <button class="button" mat-raised-button (click)="onGenerateSecretClick($event)">Generate Secret</button>
+</div>
