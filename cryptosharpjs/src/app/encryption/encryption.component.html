@@ -37,7 +37,15 @@
         <span style="padding-left:15px">
           <mat-radio-button value="base64">Base64</mat-radio-button>
         </span>
+        <span style="padding-left:15px">
+          <mat-radio-button value="file">File</mat-radio-button>
+        </span>
       </mat-radio-group>
+      <span class="file-drop-zone" style="padding-left:15px" *ngIf="encoding === 'file'">
+        <!-- <button class="button" mat-raised-button (click)="onBrowseClick()">Browse</button> -->
+        <input type="file" id="files" name="files[]" (change)="onBrowseClick($event)" />
+        <output id="list"></output>
+      </span>
     </div>
 
     <mat-form-field class="form-width" [@flash]="plainControlState" (@flash.done)="plainControlState = ''">
@@ -71,7 +79,8 @@
     <button class="button" mat-raised-button (click)="onEncryptClick()">Encrypt</button>
     <button class="button" mat-raised-button (click)="onDecryptClick()">Decrypt</button>
     <button class="button" mat-raised-button (click)="onKeyStoreClick()">{{keyButtonName}}</button>
-    <button class="button" mat-raised-button (click)="onSendClick()">Send</button>
+    <!-- <button class="button" mat-raised-button (click)="onSendClick()">Send</button> -->
+    <!-- <button class="button" mat-raised-button (click)="onDebugClick()">Debug</button> -->
     <mat-checkbox [(ngModel)]="autoIV">Auto IV</mat-checkbox>
   </div>
 </div>

@@ -9,3 +9,7 @@
 .keySaved{
     background-color: yellow;
 }
+
+.file-drop-zone{
+    border: 2px dashed #bbb;
+}

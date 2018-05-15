@@ -6,6 +6,8 @@ import { Buffer } from "buffer"
 import * as toastr from "toastr"
 import { trigger, state, transition, animate, style, keyframes } from '@angular/animations'
 import { flashAnimation, flashState } from '../shared/custom-animations'
+import { FileInfo } from '../shared/fileInfo';
+import { downloadFile } from '../shared/extensions';
 
 @Component({
   selector: 'app-encryption',
@@ -25,6 +27,7 @@ export class EncryptionComponent implements OnInit {
   plainControlState: flashState = ''
   cryptoControlState: flashState = ''
   keyButtonName: "Save" | "Clear" = "Save"
+  fileInfo: FileInfo
 
   constructor() { }
 
@@ -36,6 +39,8 @@ export class EncryptionComponent implements OnInit {
       this.keyControlState = "greenflash"
     }
   }
+
+  onDebugClick() { }
 
   onKeyStoreClick() {
     if (this.keyControl.invalidOrEmpty) {
@@ -55,25 +60,39 @@ export class EncryptionComponent implements OnInit {
     this.keyControlState = "greenflash"
   }
 
-  onSendClick() {
-    if (this.cryptoControl.invalidOrEmpty) {
-      this.cryptoControlState = 'redflash'
-      this.cryptoControl.markAsDirty()
-      return
+  onBrowseClick(event) {
+    var file: File = event.target.files[0]
+    if (!file) return
+
+    var fileReader = new FileReader()
+    fileReader.onload = (event) => {
+      const arrayBuffer: ArrayBuffer = fileReader.result
+      const buffer = Buffer.from(arrayBuffer)
+      this.fileInfo = new FileInfo(buffer, file.name)
     }
-    window.open(`mailto:?Subject=Message&Body=${this.cryptoControl.value}`, "_parent")
+    fileReader.readAsArrayBuffer(file)
   }
 
   onEncodingChange() {
     switch (this.encoding) {
       case "utf8":
         this.plainControl.clearValidators()
+        this.plainControl.enable()
+        this.cryptoControl.enable()
         break
       case "hex":
         this.plainControl.setValidators(hexValidator)
+        this.plainControl.enable()
+        this.cryptoControl.enable()
         break
       case "base64":
         this.plainControl.setValidators(base64Validator)
+        this.plainControl.enable()
+        this.cryptoControl.enable()
+        break
+      case "file":
+        this.plainControl.disable()
+        this.cryptoControl.disable()
         break
     }
     this.plainControl.reset()
@@ -103,26 +122,33 @@ export class EncryptionComponent implements OnInit {
       this.ivControlState = 'redflash'
       return
     }
-    if (this.plainControl.invalidOrEmpty) {
+    if (this.encoding !== "file" && this.plainControl.invalidOrEmpty) {
+      this.plainControlState = 'redflash'
+      this.plainControl.markAsDirty()
+      return
+    }
+    if (this.encoding === "file" && !this.fileInfo) {
       this.plainControlState = 'redflash'
       this.plainControl.markAsDirty()
       return
     }
 
-
     try {
       const key = Buffer.from(this.keyControl.value, "hex")
       const iv = this.autoIV ? crypto.randomBytes(16) : Buffer.from(this.ivControl.value, "hex")
+      const plainData = this.encoding === 'file' ?
+        this.fileInfo.data : Buffer.from(this.plainControl.value, this.encoding)
       const cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
+      let encryptedData = cipher.update(plainData)
+      encryptedData = Buffer.concat([encryptedData, cipher.final()])
+      if (this.autoIV) encryptedData = Buffer.concat([encryptedData, iv])
 
-      const plainTextBuffer = Buffer.from(this.plainControl.value, this.encoding)
-      let encrypted = cipher.update(plainTextBuffer)
-
-      encrypted = Buffer.concat([encrypted, cipher.final()])
-      if (this.autoIV) {
-        encrypted = Buffer.concat([encrypted, iv])
+      if (this.encoding === 'file') {
+        downloadFile(encryptedData, `${this.fileInfo.fullName}.enc`)
+        return
       }
-      this.cryptoControl.setValue(encrypted.toString("hex"))
+
+      this.cryptoControl.setValue(encryptedData.toString("hex"))
       this.cryptoControlState = 'greenflash'
     } catch (ex) {
       toastr.error(ex)
@@ -140,7 +166,12 @@ export class EncryptionComponent implements OnInit {
       this.ivControlState = 'redflash'
       return
     }
-    if (this.cryptoControl.invalidOrEmpty) {
+    if (this.encoding !== "file" && this.cryptoControl.invalidOrEmpty) {
+      this.cryptoControlState = 'redflash'
+      this.cryptoControl.markAsDirty()
+      return
+    }
+    if (this.encoding === "file" && !this.fileInfo) {
       this.cryptoControlState = 'redflash'
       this.cryptoControl.markAsDirty()
       return
@@ -149,7 +180,8 @@ export class EncryptionComponent implements OnInit {
     try {
       const key = Buffer.from(this.keyControl.value, "hex")
       let iv: Buffer
-      let encryptedBuffer = Buffer.from(this.cryptoControl.value, "hex")
+      let encryptedBuffer = this.encoding === 'file' ?
+        this.fileInfo.data : Buffer.from(this.cryptoControl.value, "hex")
       if (this.autoIV) {
         iv = encryptedBuffer.slice(-16)
         encryptedBuffer = encryptedBuffer.slice(0, -16)
@@ -158,12 +190,27 @@ export class EncryptionComponent implements OnInit {
       }
 
       const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
-      let decrypted = decipher.update(encryptedBuffer)
-      decrypted = Buffer.concat([decrypted, decipher.final()])
-      this.plainControl.setValue(decrypted.toString(this.encoding))
+      let decryptedData = decipher.update(encryptedBuffer)
+      decryptedData = Buffer.concat([decryptedData, decipher.final()])
+
+      if (this.encoding === 'file') {
+        downloadFile(decryptedData, this.fileInfo.name)
+        return
+      }
+
+      this.plainControl.setValue(decryptedData.toString(this.encoding))
       this.plainControlState = 'greenflash'
     } catch (ex) {
       toastr.error(ex)
     }
+  }
+
+  onSendClick() {
+    if (this.cryptoControl.invalidOrEmpty) {
+      this.cryptoControlState = 'redflash'
+      this.cryptoControl.markAsDirty()
+      return
+    }
+    window.open(`mailto:?Subject=Message&Body=${this.cryptoControl.value}`, "_parent")
   }
 }

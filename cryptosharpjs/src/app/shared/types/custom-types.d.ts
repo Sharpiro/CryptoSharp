@@ -1,1 +1,1 @@
-type encoding = "utf8" | "hex" | "base64"
+type encoding = "utf8" | "hex" | "base64" | "file"
