@@ -8,15 +8,7 @@ import { Buffer } from "buffer"
 })
 export class AppComponent implements OnInit {
   title = 'app';
-  opened = false
-  sidenav: any
+  opened = true
 
-  ngOnInit(): void {
-  }
-
-  close() {
-    console.log("closing...")
-    this.opened = false
-    this.sidenav.close()
-  }
+  ngOnInit() { }
 }

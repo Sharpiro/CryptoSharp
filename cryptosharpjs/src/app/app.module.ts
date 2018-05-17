@@ -3,17 +3,19 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatButtonModule, MatToolbarModule, MatInputModule, ShowOnDirtyErrorStateMatcher, ErrorStateMatcher, MatCheckboxModule, MatRadioModule, MatSidenavModule } from '@angular/material';
+import { MatButtonModule, MatToolbarModule, MatInputModule, ShowOnDirtyErrorStateMatcher, ErrorStateMatcher, MatCheckboxModule, MatRadioModule, MatSidenavModule, MatTableModule } from '@angular/material';
 import { EncryptionComponent } from './encryption/encryption.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { KeyExchangeComponent } from './key-exchange/key-exchange.component';
-import { MatIconModule } from '@angular/material/icon'
+import { MatIconModule } from '@angular/material/icon';
+import { KeyManagementComponent } from './key-management/key-management.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     EncryptionComponent,
-    KeyExchangeComponent
+    KeyExchangeComponent,
+    KeyManagementComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +29,8 @@ import { MatIconModule } from '@angular/material/icon'
     MatCheckboxModule,
     MatRadioModule,
     MatIconModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatTableModule
   ],
   providers: [
     { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }

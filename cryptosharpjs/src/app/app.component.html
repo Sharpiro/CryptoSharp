@@ -3,22 +3,25 @@
         <button mat-button class="menu-button" (click)="sidenav.toggle()">
             <mat-icon class="menu-icon">menu</mat-icon>
         </button>
-        <a mat-button routerLink="/dashboard" [routerLinkActive]="['active']">CryptoSharp</a>
+        <!-- <a mat-button routerLink="/dashboard" [routerLinkActive]="['active']">CryptoSharp</a>
         <a mat-button routerLink="/encryption" [routerLinkActive]="['active']">Encryption</a>
-        <a mat-button routerLink="/keyexchange" [routerLinkActive]="['active']">Key Exchange</a>
+        <a mat-button routerLink="/keyexchange" [routerLinkActive]="['active']">Key Exchange</a> -->
     </div>
 </mat-toolbar>
 
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #sidenav>
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened">
+        <!-- <div>
+            <a class="menu-link" (click)="sidenav.close()" mat-button routerLink="/dashboard" [routerLinkActive]="['active']">CryptoSharp</a>
+        </div> -->
         <div>
-            <a (click)="sidenav.close()" mat-button routerLink="/dashboard" [routerLinkActive]="['active']">CryptoSharp</a>
+            <a class="menu-link" mat-button routerLink="/encryption" [routerLinkActive]="['active']">Encryption</a>
         </div>
         <div>
-            <a (click)="sidenav.close()" mat-button routerLink="/encryption" [routerLinkActive]="['active']">Encryption</a>
+            <a class="menu-link" mat-button routerLink="/keyexchange" [routerLinkActive]="['active']">Key Exchange</a>
         </div>
         <div>
-            <a (click)="sidenav.close()" mat-button routerLink="/keyexchange" [routerLinkActive]="['active']">Key Exchange</a>
+            <a class="menu-link" mat-button routerLink="/keymanagement" [routerLinkActive]="['active']">Key Management</a>
         </div>
     </mat-sidenav>
 
