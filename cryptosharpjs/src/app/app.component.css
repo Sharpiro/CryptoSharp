@@ -19,14 +19,18 @@
     width:200px;
 }
 
-/* .sidenav-container {
+.sidenav-container {
     position: absolute;
     top: 64px;
     bottom: 0;
     left: 0;
     right: 0;
-  } */
+}
 
   mat-sidenav{
       background-color: rgba(0,0,0,.03);
+  }
+
+  .header{
+      font-size: 20px;
   }

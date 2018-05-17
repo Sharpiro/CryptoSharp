@@ -1,21 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 @Component({
   selector: 'app-key-management',
   templateUrl: './key-management.component.html',
   styleUrls: ['./key-management.component.css']
 })
-export class KeyManagementComponent implements OnInit {
-  displayedColumns = ['select', 'index', 'key', 'name', 'description']
-  dataSource = new MatTableDataSource<any>(ELEMENT_DATA);
-  selection = new SelectionModel<Element>(true, []);
+export class KeyManagementComponent implements OnInit, AfterViewInit {
+  displayedColumns = ['select', 'id', 'key', 'name', 'description']
+  dataSource = new MatTableDataSource<Entry>(ELEMENT_DATA.map((d, i) => {
+    const obj: Entry = { id: i + 1, key: d.key, name: d.name, description: d.description }
+    return obj
+  }));
+  selection = new SelectionModel<Entry>(true, []);
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor() { }
 
-  ngOnInit() {
+  ngOnInit() { }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   isAllSelected() {
@@ -26,36 +35,49 @@ export class KeyManagementComponent implements OnInit {
 
   masterToggle() {
     this.isAllSelected() ?
-        this.selection.clear() :
-        this.dataSource.data.forEach(row => this.selection.select(row));
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  deleteSelected() {
+    // this.dataSource.data = []
+    // console.log(this.dataSource.data)
+    // console.log(ELEMENT_DATA)
+    // this.selection.clear()
+    // const temp = { ["temp"]: 12 }
+    const map = {}
+    for (const temp of this.selection.selected) {
+      map[temp.id] = true
+    }
+    this.dataSource.data = this.dataSource.data.filter(s => map[s.id] !== true)
+    // console.log(this.selection.selected[0].name = "difffffffffffffffffff")
   }
 }
 
-const ELEMENT_DATA = [
+let ELEMENT_DATA: Entry[] = [
+  { key: "aabb", name: "key1", description: "key1D" },
+  { key: "aacc", name: "key2", description: "key2D" },
+  { key: "aadd", name: "key2", description: "key3D" },
+  { key: "aabb", name: "key1", description: "key1D" },
+  { key: "aacc", name: "key2", description: "key2D" },
+  { key: "aadd", name: "key2", description: "key3D" },
+  { key: "aabb", name: "key1", description: "key1D" },
+  { key: "aacc", name: "key2", description: "key2D" },
+  { key: "aadd", name: "key2", description: "key3D" },
+  { key: "aabb", name: "key1", description: "key1D" },
+  { key: "aacc", name: "key2", description: "key2D" },
+  { key: "aadd", name: "key2", description: "key3D" },
+  { key: "aabb", name: "key1", description: "key1D" },
+  { key: "aacc", name: "key2", description: "key2D" },
+  { key: "aadd", name: "key2", description: "key3D" },
   { key: "aabb", name: "key1", description: "key1D" },
   { key: "aacc", name: "key2", description: "key2D" },
   { key: "aadd", name: "key2", description: "key3D" },
 ]
 
-// const ELEMENT_DATA: any[] = [
-//   { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-//   { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-//   { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-//   { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-//   { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-//   { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-//   { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-//   { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-//   { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-//   { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-//   { position: 11, name: 'Sodium', weight: 22.9897, symbol: 'Na' },
-//   { position: 12, name: 'Magnesium', weight: 24.305, symbol: 'Mg' },
-//   { position: 13, name: 'Aluminum', weight: 26.9815, symbol: 'Al' },
-//   { position: 14, name: 'Silicon', weight: 28.0855, symbol: 'Si' },
-//   { position: 15, name: 'Phosphorus', weight: 30.9738, symbol: 'P' },
-//   { position: 16, name: 'Sulfur', weight: 32.065, symbol: 'S' },
-//   { position: 17, name: 'Chlorine', weight: 35.453, symbol: 'Cl' },
-//   { position: 18, name: 'Argon', weight: 39.948, symbol: 'Ar' },
-//   { position: 19, name: 'Potassium', weight: 39.0983, symbol: 'K' },
-//   { position: 20, name: 'Calcium', weight: 40.078, symbol: 'Ca' },
-// ]
+interface Entry {
+  id?: number
+  key: string
+  name: string
+  description: string
+}

@@ -3,17 +3,14 @@
         <button mat-button class="menu-button" (click)="sidenav.toggle()">
             <mat-icon class="menu-icon">menu</mat-icon>
         </button>
-        <!-- <a mat-button routerLink="/dashboard" [routerLinkActive]="['active']">CryptoSharp</a>
-        <a mat-button routerLink="/encryption" [routerLinkActive]="['active']">Encryption</a>
+        <a class="header" mat-button routerLink="" [routerLinkActive]="['active']">CryptoSharp</a>
+        <!--<a mat-button routerLink="/encryption" [routerLinkActive]="['active']">Encryption</a>
         <a mat-button routerLink="/keyexchange" [routerLinkActive]="['active']">Key Exchange</a> -->
     </div>
 </mat-toolbar>
 
 <mat-sidenav-container class="sidenav-container">
     <mat-sidenav #sidenav mode="side" [(opened)]="opened">
-        <!-- <div>
-            <a class="menu-link" (click)="sidenav.close()" mat-button routerLink="/dashboard" [routerLinkActive]="['active']">CryptoSharp</a>
-        </div> -->
         <div>
             <a class="menu-link" mat-button routerLink="/encryption" [routerLinkActive]="['active']">Encryption</a>
         </div>
