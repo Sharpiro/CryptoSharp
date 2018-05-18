@@ -42,7 +42,10 @@
   </div>
 
   <div class="row">
-    <button class="button" mat-raised-button>Test2</button>
-    <button class="button" mat-button (click)="deleteSelected()">Delete</button>
+    <button class="button" mat-raised-button (click)="onAddClick()">Add</button>
+    <button class="button" mat-raised-button (click)="onSaveClick()">Save</button>
+    <button class="button" mat-raised-button (click)="onResetClick()">Reset</button>
+    <button class="button" mat-raised-button (click)="onDeleteClick()">Delete</button>
+    <button class="button" mat-raised-button (click)="onDebugClick()">Debug</button>
   </div>
 </div>

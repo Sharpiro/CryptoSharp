@@ -19,3 +19,8 @@ body{
     background-color: #3f51b5;
     color: #fafafa !important;
 }
+
+.clearDialog .mat-dialog-container{
+    box-shadow: none;
+    background-color: rgba(0,0,0,0);
+}
