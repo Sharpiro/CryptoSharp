@@ -8,7 +8,7 @@ import { EncryptionComponent } from './encryption/encryption.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { KeyExchangeComponent } from './key-exchange/key-exchange.component';
 import { MatIconModule } from '@angular/material/icon';
-import { KeyManagementComponent } from './key-management/key-management.component';
+import { KeyManagementComponent, CustomPaginator } from './key-management/key-management.component';
 import { AddKeyModalComponent } from './key-management/add-key-modal/add-key-modal.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component'
 import { KeyManagementService } from './key-management/key-management.service';
@@ -21,7 +21,8 @@ import { SpinnerService } from './shared/spinner/spinner.service';
     KeyExchangeComponent,
     KeyManagementComponent,
     AddKeyModalComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    CustomPaginator
   ],
   imports: [
     BrowserModule,

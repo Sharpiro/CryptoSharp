@@ -8,6 +8,43 @@ import { KeyInfo } from '.';
 import { KeyManagementService } from './key-management.service';
 import { SpinnerService } from '../shared/spinner/spinner.service';
 
+// @Component({
+//   selector: 'app-custom-paginator',
+//   template: '<mat-paginator #paginator pageSize="10" [pageSizeOptions]="[5, 10, 20]" [showFirstLastButtons]="true"></mat-paginator>',
+// })
+// export class CustomPaginator extends MatPaginator implements OnInit {
+//   @ViewChild(MatPaginator) paginator: MatPaginator;
+
+//   async ngOnInit() {
+//     console.log(this);
+//     console.log(this.paginator);
+//   }
+
+//   getCurrentPageLength(): number {
+//     const pageIndex = this.pageIndex
+//     const pageSize = this.pageSize
+//     const minIndex = pageIndex * pageSize
+//     const maxIndex = pageIndex * pageSize + pageSize - 1
+//     const itemLength = this.length
+//     const totalPages = this.getNumberOfPages() + 1
+//     if (pageIndex + 1 !== totalPages) return pageSize
+//     const remainingitems = itemLength % pageSize
+//     return remainingitems === 0 ? pageSize : remainingitems
+//   }
+// }
+
+@Component({
+  selector: 'app-custom-paginator',
+  template: '<mat-paginator #paginator pageSize="10"></mat-paginator>',
+})
+export class CustomPaginator extends MatPaginator {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  customMethod(): number {
+    return 1
+  }
+}
+
 @Component({
   selector: 'app-key-management',
   templateUrl: './key-management.component.html',
@@ -18,7 +55,8 @@ export class KeyManagementComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<KeyInfo>()
   selection = new SelectionModel<KeyInfo>(true, []);
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(CustomPaginator) paginator: CustomPaginator;
+  // @ViewChild(CustomPaginator) paginator: CustomPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(private keyManagementService: KeyManagementService, private dialog: MatDialog,
@@ -32,17 +70,19 @@ export class KeyManagementComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit() {
+    console.log((this.paginator as CustomPaginator))
     this.dataSource.paginator = this.paginator;
-    this.dataSource.paginator.page.subscribe(res => {
-      this.selection.clear()
-    })
     this.dataSource.sort = this.sort;
+    // this.dataSource.paginator.page.subscribe(res => {
+    //   this.selection.clear()
+    // })
   }
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const pageSize = this.dataSource.paginator.pageSize;
-    return numSelected === pageSize;
+    const currentPageLength = -1//this.paginator.getCurrentPageLength()
+    return numSelected === pageSize || numSelected == currentPageLength;
   }
 
   masterToggle() {
@@ -70,16 +110,39 @@ export class KeyManagementComponent implements OnInit, AfterViewInit {
   }
 
   async onSaveClick() {
-    const temp = await this.keyManagementService.setKeyInfoList(this.dataSource.data).toPromise()
-    console.log("done")
+    this.spinnerService.open()
+    await this.keyManagementService.setKeyInfoList(this.dataSource.data).toPromise()
+    this.spinnerService.close()
   }
 
   onDebugClick() {
     const pageIndex = this.dataSource.paginator.pageIndex
     const pageSize = this.dataSource.paginator.pageSize
-    console.log(pageIndex * pageSize)
-    console.log(pageIndex * pageSize + pageSize)
-    console.log(this.dataSource.data.slice(pageIndex * pageSize, pageIndex * pageSize + pageSize))
+    const minIndex = pageIndex * pageSize
+    const maxIndex = pageIndex * pageSize + pageSize - 1
+    const itemLength = this.dataSource.paginator.length
+    const totalPages = this.dataSource.paginator.getNumberOfPages() + 1
+    const pageSlice = this.dataSource.data.slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
+    console.log("pageIndex:", pageIndex)
+    console.log("maxPageSize:", pageSize)
+    console.log("min:", minIndex)
+    console.log("max:", maxIndex)
+    console.log("length:", itemLength)
+    console.log("pages:", totalPages)
+    console.log("currentPageSize:", pageSlice)
+    console.log("pageSlice:", this.getCurrentPageLength())
+  }
+
+  private getCurrentPageLength(): number {
+    const pageIndex = this.dataSource.paginator.pageIndex
+    const pageSize = this.dataSource.paginator.pageSize
+    const minIndex = pageIndex * pageSize
+    const maxIndex = pageIndex * pageSize + pageSize - 1
+    const itemLength = this.dataSource.paginator.length
+    const totalPages = this.dataSource.paginator.getNumberOfPages() + 1
+    if (pageIndex + 1 !== totalPages) return pageSize
+    const remainingitems = itemLength % pageSize
+    return remainingitems === 0 ? pageSize : remainingitems
   }
 
   onAddClick() {

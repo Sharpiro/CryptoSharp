@@ -20,17 +20,17 @@
 
         <ng-container matColumnDef="key">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Key </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.key}} </mat-cell>
+          <mat-cell class="key-cell" *matCellDef="let element"> {{element.key}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+          <mat-cell class="key-cell" *matCellDef="let element"> {{element.name}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="description">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
+          <mat-cell class="key-cell" *matCellDef="let element"> {{element.description}} </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -38,7 +38,8 @@
       </mat-table>
     </div>
 
-    <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" [showFirstLastButtons]="true"></mat-paginator>
+    <!-- <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" [showFirstLastButtons]="true"></mat-paginator> -->
+    <app-custom-paginator></app-custom-paginator>
   </div>
 
   <div class="row">
