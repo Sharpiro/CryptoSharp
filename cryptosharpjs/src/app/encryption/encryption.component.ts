@@ -8,6 +8,7 @@ import { trigger, state, transition, animate, style, keyframes } from '@angular/
 import { flashAnimation, flashState } from '../shared/custom-animations'
 import { FileInfo } from '../shared/fileInfo';
 import { downloadFile } from '../shared/extensions';
+import { encoding } from '../shared/types/custom-types';
 
 @Component({
   selector: 'app-encryption',

@@ -8,6 +8,7 @@ import { KeyInfo } from '.';
 import { KeyManagementService } from './key-management.service';
 import { SpinnerService } from '../shared/spinner/spinner.service';
 
+// https://stackoverflow.com/questions/50438550/angular-material-extend-a-matpaginator-without-creating-a-dupe-paginator
 // @Component({
 //   selector: 'app-custom-paginator',
 //   template: '<mat-paginator #paginator pageSize="10" [pageSizeOptions]="[5, 10, 20]" [showFirstLastButtons]="true"></mat-paginator>',
@@ -70,7 +71,6 @@ export class KeyManagementComponent implements OnInit, AfterViewInit {
   }
 
   async ngAfterViewInit() {
-    console.log((this.paginator as CustomPaginator))
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     // this.dataSource.paginator.page.subscribe(res => {
